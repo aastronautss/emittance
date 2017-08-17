@@ -1,9 +1,7 @@
 module SystemEvents
-  class Watcher
-    def self.watch(identifier)
-      ActiveSupport::Notifications.subscribe(identifier) do |name, |
-        
-      end
+  module Watcher
+    def watch(identifier, &block)
+      SystemEvents::Broker.register identifier, block
     end
   end
 end
