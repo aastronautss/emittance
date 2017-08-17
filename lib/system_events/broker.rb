@@ -1,17 +1,17 @@
 module SystemEvents
   class Broker
-    class << self
-      @registrations = {}
+    @registrations = {}
 
-      def process_event(identifier, timestamp, object, payload)
+    class << self
+      def process_event(identifier, timestamp, object = nil, payload = [])
         registrations_for(identifier).each do |registration|
           registration.call identifier, timestamp, object, payload
         end
       end
 
-      def register(identifier, callback)
+      def register(identifier, &callback)
         @registrations[identifier.to_sym] ||= []
-        registrations_for(identifier) << Registration.new(identifier, callback)
+        registrations_for(identifier) << SystemEvents::Registration.new(identifier, &callback)
       end
 
       private

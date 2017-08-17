@@ -1,7 +1,7 @@
 module SystemEvents
   module Watcher
-    def watch(identifier, &block)
-      SystemEvents::Broker.register identifier, block
+    def watch(identifier, &callback)
+      SystemEvents::Broker.register identifier, callback
     end
   end
 end
