@@ -10,8 +10,32 @@ describe SystemEvents::Broker do
   end
 
   describe '.process_event' do
+    after { SystemEvents::Broker.clear_registrations! }
+
     it 'runs the registered callback' do
-      SystemEvents::Broker.register('foo') { |_| puts 'bar' }
+      tester = double('tester')
+      expect(tester).to receive(:bar)
+
+      SystemEvents::Broker.register('foo') do
+        tester.bar
+      end
+
+      SystemEvents::Broker.process_event 'foo', Time.now
+    end
+
+    it 'passes params into the callback' do
+      tester = double('tester')
+      expect(tester).to receive(:bar)
+
+      SystemEvents::Broker.register('foo') do |identifier, timestamp, payload|
+        expect(identifier).to be_a(Symbol)
+        expect(timestamp).to be_a(Time)
+        expect(payload).to be_a(Array)
+
+        tester.bar
+      end
+
+      SystemEvents::Broker.process_event 'foo', Time.now
     end
   end
 end

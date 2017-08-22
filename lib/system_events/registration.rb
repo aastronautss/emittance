@@ -3,12 +3,12 @@ module SystemEvents
     attr_reader :identifier
 
     def initialize(identifier, &callback)
-      @identifier = identifier
+      @identifier = identifier.to_sym
       @callback = callback
     end
 
-    def call(timestamp, object, payload)
-      @callback.call @identifier, timestamp, object, payload
+    def call(timestamp, payload)
+      @callback.call @identifier, timestamp, payload
     end
   end
 end
