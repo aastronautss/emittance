@@ -38,4 +38,44 @@ describe SystemEvents::Broker do
       SystemEvents::Broker.process_event 'foo', Time.now
     end
   end
+
+  describe '.clear_registrations_for!' do
+    subject { SystemEvents::Broker.clear_registrations_for! 'foo' }
+    after { SystemEvents::Broker.clear_registrations! }
+
+    it 'clears a registration' do
+      SystemEvents::Broker.register('foo') { puts 'bar' }
+
+      subject
+      expect(SystemEvents::Broker.registrations_for('foo')).to be_empty
+    end
+
+    it 'does not clear registrations for other identifiers' do
+      SystemEvents::Broker.register('foo') { puts 'bar' }
+      SystemEvents::Broker.register('bar') { puts 'baz' }
+      
+      subject
+      expect(SystemEvents::Broker.registrations_for('bar')).to_not be_empty
+    end
+  end
+
+  describe '.clear_registrations!' do
+    subject { SystemEvents::Broker.clear_registrations! }
+
+    it 'clears a registration' do
+      SystemEvents::Broker.register('foo') { puts 'bar' }
+
+      subject
+      expect(SystemEvents::Broker.registrations_for('foo')).to be_empty
+    end
+
+    it 'clears multiple registrations' do
+      SystemEvents::Broker.register('foo') { puts 'bar' }
+      SystemEvents::Broker.register('bar') { puts 'baz' }
+
+      subject
+      expect(SystemEvents::Broker.registrations_for('foo')).to be_empty
+      expect(SystemEvents::Broker.registrations_for('bar')).to be_empty
+    end
+  end
 end

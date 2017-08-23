@@ -14,17 +14,15 @@ module SystemEvents
         registrations_for(identifier) << SystemEvents::Registration.new(identifier, &callback)
       end
 
+      def clear_registrations_for!(identifier)
+        @registrations[identifier.to_sym].clear
+      end
+
       def clear_registrations!
         @registrations.keys.each do |identifier|
           self.clear_registrations_for! identifier
         end
       end
-
-      def clear_registrations_for!(identifier)
-        @registrations[identifier.to_sym].clear
-      end
-
-      private
 
       def registrations_for(identifier)
         @registrations[identifier.to_sym] || []
