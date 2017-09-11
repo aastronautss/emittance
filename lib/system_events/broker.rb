@@ -3,9 +3,9 @@ module SystemEvents
     @registrations = {}
 
     class << self
-      def process_event(identifier, timestamp, object = nil, payload = [])
+      def process_event(identifier, timestamp, emitter = nil, payload = [])
         registrations_for(identifier).each do |registration|
-          registration.call timestamp, payload
+          registration.call timestamp, emitter, payload
         end
       end
 

@@ -27,7 +27,7 @@ describe SystemEvents::Broker do
       tester = double('tester')
       expect(tester).to receive(:bar)
 
-      SystemEvents::Broker.register('foo') do |identifier, timestamp, payload|
+      SystemEvents::Broker.register('foo') do |identifier, timestamp, emitter, payload|
         expect(identifier).to be_a(Symbol)
         expect(timestamp).to be_a(Time)
         expect(payload).to be_a(Array)
@@ -53,7 +53,7 @@ describe SystemEvents::Broker do
     it 'does not clear registrations for other identifiers' do
       SystemEvents::Broker.register('foo') { puts 'bar' }
       SystemEvents::Broker.register('bar') { puts 'baz' }
-      
+
       subject
       expect(SystemEvents::Broker.registrations_for('bar')).to_not be_empty
     end
@@ -126,10 +126,10 @@ describe SystemEvents::Watcher do
       tester = double('tester')
       payload_1 = 'hello'
       payload_2 = 'world'
-      expect(tester).to receive(:test_me).with(payload_1, payload_2)
+      expect(tester).to receive(:test_me).with(Foo, payload_1, payload_2)
 
       my_bar = Bar.new
-      my_bar.watch('test_foo') { |identifier, timestamp, payload| tester.test_me(*payload) }
+      my_bar.watch('test_foo') { |identifier, timestamp, emitter, payload| tester.test_me(emitter, *payload) }
 
       Foo.emit 'test_foo', payload_1, payload_2
     end
