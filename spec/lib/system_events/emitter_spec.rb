@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe SystemEvents::Emitter do
   before do
+    SystemEvents.disable
+
     class Foo
       extend SystemEvents::Emitter
     end
