@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe SystemEvents::Broker do
+  subject { SystemEvents::Broker }
+
   describe '.register' do
     it 'stores a registration' do
       SystemEvents::Broker.register('foo') { |_| puts 'bar' }
@@ -40,13 +42,13 @@ describe SystemEvents::Broker do
   end
 
   describe '.clear_registrations_for!' do
-    subject { SystemEvents::Broker.clear_registrations_for! 'foo' }
+    let(:action) { subject.clear_registrations_for! 'foo' }
     after { SystemEvents::Broker.clear_registrations! }
 
     it 'clears a registration' do
       SystemEvents::Broker.register('foo') { puts 'bar' }
 
-      subject
+      action
       expect(SystemEvents::Broker.registrations_for('foo')).to be_empty
     end
 
@@ -54,18 +56,18 @@ describe SystemEvents::Broker do
       SystemEvents::Broker.register('foo') { puts 'bar' }
       SystemEvents::Broker.register('bar') { puts 'baz' }
 
-      subject
+      action
       expect(SystemEvents::Broker.registrations_for('bar')).to_not be_empty
     end
   end
 
   describe '.clear_registrations!' do
-    subject { SystemEvents::Broker.clear_registrations! }
+    let(:action) { subject.clear_registrations! }
 
     it 'clears a registration' do
       SystemEvents::Broker.register('foo') { puts 'bar' }
 
-      subject
+      action
       expect(SystemEvents::Broker.registrations_for('foo')).to be_empty
     end
 
@@ -73,7 +75,7 @@ describe SystemEvents::Broker do
       SystemEvents::Broker.register('foo') { puts 'bar' }
       SystemEvents::Broker.register('bar') { puts 'baz' }
 
-      subject
+      action
       expect(SystemEvents::Broker.registrations_for('foo')).to be_empty
       expect(SystemEvents::Broker.registrations_for('bar')).to be_empty
     end
