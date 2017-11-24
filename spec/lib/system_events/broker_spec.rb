@@ -7,7 +7,7 @@ describe SystemEvents::Broker do
     it 'stores a registration' do
       subject.register('foo') { |_| puts 'bar' }
 
-      expect(subject.instance_variable_get('@registrations')[:foo]).to be_present
+      expect(subject.instance_variable_get('@registrations')['foo']).to be_present
     end
   end
 
@@ -30,7 +30,7 @@ describe SystemEvents::Broker do
       expect(tester).to receive(:bar)
 
       subject.register('foo') do |identifier, timestamp, emitter, payload|
-        expect(identifier).to be_a(Symbol)
+        expect(identifier).to eq('foo')
         expect(timestamp).to be_a(Time)
         expect(payload).to be_a(Array)
 
