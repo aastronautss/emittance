@@ -1,51 +1,57 @@
 module SystemEvents
   module Emitter
-    def self.extended(extender)
-      SystemEvents::Emitter.emitter_eval(extender) do
-        unless singleton_class.method_defined? :emits_on_methods
-          def self.emits_on_methods
-            @_emits_on_methods ||= []
-          end
+    class << self
+      def extended(extender)
+        SystemEvents::Emitter.emitter_eval(extender) do
+          include ClassAndInstanceMethods
+          extend ClassAndInstanceMethods
         end
+      end
 
-        include InstanceMethods
+      def non_emitting_method_for(method_name)
+        "_non_emitting_#{method_name}".to_sym 
+      end
+
+      def emitting_method_event_name(emitter, method_name)
+        "#{emitter}##{method_name}"
+      end
+
+      def emitter_eval(klass, *args, &blk)
+        if klass.respond_to? :class_eval
+          klass.class_eval *args, &blk
+        else
+          klass.singleton_class.class_eval(*args, &blk)
+        end
       end
     end
 
-    def self.non_emitting_method_for(mth)
-      "_non_emitting_#{method_name}".to_sym
-    end
-
-    def self.emitter_eval(klass, *args, &blk)
-      if klass.respond_to? :class_eval
-        klass.class_eval *args, &blk
-      else
-        klass.singleton_class.class_eval(*args, &blk)
-      end
-    end
-
-    module InstanceMethods
+    module ClassAndInstanceMethods
       def emit(identifier, *payload)
         now = Time.now
         SystemEvents::Broker.process_event identifier, now, self, payload
       end
     end
 
-    EmittingMethod = Struct.new :emitting_method, :arity
-
-    def emits_on(*mths)
-      mths.each do |mth|
-        non_emitting_mth = non_emitting_method_for mth
+    def emits_on(*method_names)
+      method_names.each do |method_name|
+        non_emitting_method = SystemEvents::Emitter.non_emitting_method_for method_name
 
         SystemEvents::Emitter.emitter_eval(self) do
-          if method_defined?(non_emitting_mth)
-            warn "Already emitting on #{mth}"
+          if method_defined?(non_emitting_method)
+            warn "Already emitting on #{method_name}"
             return
           end
 
-          alias_method non_emitting_mth, mth
+          alias_method non_emitting_method, method_name
 
-          emitting_mth = EmittingMethod.new mth, instance_method(mth).arity
+          module_eval <<-EOS, __FILE__, __LINE__ + 1
+            def #{method_name}(*args, &blk)
+              event_name = SystemEvents::Emitter.emitting_method_event_name(self.class, __method__)
+              return_value = #{non_emitting_method}(*args, &blk)
+              emit event_name, return_value
+              return_value
+            end
+          EOS
         end
       end
     end

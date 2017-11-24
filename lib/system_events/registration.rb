@@ -3,7 +3,7 @@ module SystemEvents
     attr_reader :identifier
 
     def initialize(identifier, &callback)
-      @identifier = identifier.to_sym
+      @identifier = identifier
       @callback = callback
     end
 

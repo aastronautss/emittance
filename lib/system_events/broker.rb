@@ -10,12 +10,12 @@ module SystemEvents
       end
 
       def register(identifier, &callback)
-        @registrations[identifier.to_sym] ||= []
+        @registrations[identifier] ||= []
         registrations_for(identifier) << SystemEvents::Registration.new(identifier, &callback)
       end
 
       def clear_registrations_for!(identifier)
-        @registrations[identifier.to_sym].clear
+        @registrations[identifier].clear
       end
 
       def clear_registrations!
@@ -25,7 +25,7 @@ module SystemEvents
       end
 
       def registrations_for(identifier)
-        @registrations[identifier.to_sym] || []
+        @registrations[identifier] || []
       end
     end
   end
