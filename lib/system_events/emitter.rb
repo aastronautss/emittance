@@ -11,15 +11,15 @@ module SystemEvents::Emitter
       "_non_emitting_#{method_name}".to_sym 
     end
 
-    def emitting_method_event_name(emitter, method_name)
-      "#{emitter}##{method_name}"
+    def emitting_method_event_name(emitter_klass, method_name)
+      "#{emitter_klass}##{method_name}"
     end
 
     def emitter_eval(klass, *args, &blk)
       if klass.respond_to? :class_eval
         klass.class_eval *args, &blk
       else
-        klass.singleton_class.class_eval(*args, &blk)
+        klass.singleton_class.class_eval *args, &blk
       end
     end
   end
@@ -37,20 +37,20 @@ module SystemEvents::Emitter
 
       SystemEvents::Emitter.emitter_eval(self) do
         if method_defined?(non_emitting_method)
-          warn "Already emitting on #{method_name}"
+          warn "Already emitting on #{method_name.inspect}"
           return
         end
 
         alias_method non_emitting_method, method_name
 
-        module_eval <<-EOS, __FILE__, __LINE__ + 1
+        module_eval <<-RUBY, __FILE__, __LINE__ + 1
           def #{method_name}(*args, &blk)
             event_name = SystemEvents::Emitter.emitting_method_event_name(self.class, __method__)
             return_value = #{non_emitting_method}(*args, &blk)
             emit event_name, return_value
             return_value
           end
-        EOS
+        RUBY
       end
     end
   end
