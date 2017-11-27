@@ -1,5 +1,19 @@
+##
+# == Emitters
+# 
+# An emitter is any object that has the power to emit an event. Extend this module in any class whose singleton or 
+# instances you would like to have emit events.
+# 
+# == Usage
+# 
+# Whenever something warrants the emission of an event, you just need to call +#emit+ on that object. It is generally
+# a good practice for an object to emit its own events, but I'm not your mother so you can emit events from wherever
+# you want. +#emit+ takes 2 params: the identifier for the event object type (which can also be the
+# {SystemEvents::Event} class itself).
+#
 module SystemEvents::Emitter
   class << self
+    # @private
     def extended(extender)
       SystemEvents::Emitter.emitter_eval(extender) do
         include ClassAndInstanceMethods
@@ -7,14 +21,17 @@ module SystemEvents::Emitter
       end
     end
 
+    # @private
     def non_emitting_method_for(method_name)
       "_non_emitting_#{method_name}".to_sym 
     end
 
-    def emitting_method_event_name(emitter_klass, method_name)
-      "#{emitter_klass}##{method_name}"
+    # @private
+    def emitting_method_event(emitter_klass, method_name)
+      SystemEvents::Event.event_klass_for(emitter_klass, method_name)
     end
 
+    # @private
     def emitter_eval(klass, *args, &blk)
       if klass.respond_to? :class_eval
         klass.class_eval *args, &blk
@@ -24,13 +41,41 @@ module SystemEvents::Emitter
     end
   end
 
+  # Included and extended whenever { SystemEvent::Emitter } is extended.
   module ClassAndInstanceMethods
-    def emit(identifier, *payload)
+    # Emits an {SystemEvents::Event event object} to watchers.
+    # 
+    # @param identifier [Symbol, SystemEvents::Event] either an explicit Event object or the identifier that can be 
+    #   parsed into an Event object.
+    # @param payload [*] any additional information that might be helpful for an event's handler to have. Can be 
+    #   standardized on a per-event basis by pre-defining the class associated with the 
+    def emit(identifier, payload)
       now = Time.now
-      SystemEvents::Broker.process_event identifier, now, self, payload
+      event_klass = _event_klass_for identifier
+      event = event_klass.new(self, now, payload)
+      _send_to_broker event
+    end
+
+    private
+
+    # @private
+    def _event_klass_for(identifier)
+      SystemEvents::Event.event_klass_for identifier
+    end
+
+    # @private
+    def _send_to_broker(event)
+      SystemEvents::Broker.process_event event
     end
   end
 
+  # Tells the class to emit an event when a any of the given set of methods. By default, the event classes are named 
+  # accordingly: If a +Foo+ object +emits_on+ +:bar+, then the event's class will be named +FooBarEvent+, and will be
+  # a subclass of +SystemEvents::Event+.
+  # 
+  # The payload for this event will be the value returned from the method call.
+  #
+  # @param method_names [Symbol, String, Array<Symbol, String>] the methods whose calls emit an event
   def emits_on(*method_names)
     method_names.each do |method_name|
       non_emitting_method = SystemEvents::Emitter.non_emitting_method_for method_name
@@ -45,9 +90,9 @@ module SystemEvents::Emitter
 
         module_eval <<-RUBY, __FILE__, __LINE__ + 1
           def #{method_name}(*args, &blk)
-            event_name = SystemEvents::Emitter.emitting_method_event_name(self.class, __method__)
+            event_klass = SystemEvents::Emitter.emitting_method_event(self.class, __method__)
             return_value = #{non_emitting_method}(*args, &blk)
-            emit event_name, return_value
+            emit event_klass, return_value
             return_value
           end
         RUBY

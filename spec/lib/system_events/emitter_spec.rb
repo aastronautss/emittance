@@ -16,9 +16,7 @@ describe SystemEvents::Emitter do
 
   describe '.emits_on' do
     it 'sends a message to the broker' do
-      expect(SystemEvents::Broker).to(
-        receive(:process_event).with('Foo#foo', kind_of(Time), kind_of(Foo), ['bar'])
-      )
+      expect(SystemEvents::Broker).to receive(:process_event).with(kind_of SystemEvents::Event)
 
       Foo.new.foo
     end
