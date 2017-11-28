@@ -86,4 +86,16 @@ describe SystemEvents::Event::EventBuilder do
       end
     end
   end
+
+  describe '.klass_to_identifier' do
+    it 'converts a one-word class to a symbol' do
+      value = SystemEvents::Event::EventBuilder.klass_to_identifier(FooEvent)
+      expect(value).to eq(:foo)
+    end
+
+    it 'converts a multi-word class to a symbol' do
+      value = SystemEvents::Event::EventBuilder.klass_to_identifier(FooBarEvent)
+      expect(value).to eq(:foo_bar)
+    end
+  end
 end

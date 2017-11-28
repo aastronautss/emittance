@@ -12,7 +12,11 @@ class SystemEvents::Event::EventBuilder
     end
 
     def klass_to_identifier(klass)
-      klass.to_sym
+      identifier_str = klass.name
+      identifier_str = undress_klass_name identifier_str
+      identifier_str = snake_case identifier_str
+
+      identifier_str.to_sym
     end
 
     private
@@ -34,12 +38,24 @@ class SystemEvents::Event::EventBuilder
       str.gsub(/(?:_|(\/))([a-z\d]*)/) { "#{$1}#{$2.capitalize}" }
     end
 
+    def snake_case(str)
+      str.gsub(/::/, '_')
+        .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+        .gsub(/([a-z\d])([A-Z])/,'\1_\2')
+        .tr("-", "_")
+        .downcase
+    end
+
     def clean_up_punctuation(str)
-      str.gsub /[^A-Za-z0-9]/, ''
+      str.gsub /[^A-Za-z\d]/, ''
     end
 
     def dress_up_klass_name(klass_name_parts)
       "#{klass_name_parts.join}#{KLASS_NAME_SUFFIX}"
+    end
+
+    def undress_klass_name(klass_name_str)
+      klass_name_str.gsub /#{KLASS_NAME_SUFFIX}$/, ''
     end
 
     def find_or_create_event_klass(klass_name)
