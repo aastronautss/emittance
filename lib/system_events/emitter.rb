@@ -8,8 +8,16 @@
 # 
 # Whenever something warrants the emission of an event, you just need to call +#emit+ on that object. It is generally
 # a good practice for an object to emit its own events, but I'm not your mother so you can emit events from wherever
-# you want. +#emit+ takes 2 params: the identifier for the event object type (which can also be the
-# {SystemEvents::Event} class itself).
+# you want. It's probably not the best idea to do that, though. +#emit+ takes 2 params. First, it takes the identifier
+# for the event object type (which can also be the {SystemEvents::Event} class itself). See the "identifiers" section 
+# of {SystemEvents::Event} for more info on this. The second argument is the payload. This is basically whatever you 
+# want it to be, but you might want to standardize this on a per-event basis. The +SystemEvents+ will then (at this 
+# time, synchronously) trigger each callback registered to listen for events of that identifier.
+# 
+# +Emitter+ also provides a vanity class method that allows you to emit an event whenever a given method is called. 
+# This event gets triggered whenever an instance of the class finishes executing a method. This event is emitted (and 
+# therefore, all listening callbacks are triggered) between the point at which the method finishes executing and the 
+# return value is passed to its invoker.
 #
 module SystemEvents::Emitter
   class << self
@@ -41,7 +49,7 @@ module SystemEvents::Emitter
     end
   end
 
-  # Included and extended whenever { SystemEvent::Emitter } is extended.
+  # Included and extended whenever {SystemEvent::Emitter} is extended.
   module ClassAndInstanceMethods
     # Emits an {SystemEvents::Event event object} to watchers.
     # 
