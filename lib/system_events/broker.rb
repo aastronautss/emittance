@@ -17,7 +17,7 @@ module SystemEvents
       end
 
       def clear_registrations_for!(identifier)
-        @registrations[identifier].clear
+        @registrations[identifier.to_sym].clear
       end
 
       def clear_registrations!
@@ -27,14 +27,14 @@ module SystemEvents
       end
 
       def registrations_for(identifier)
-        @registrations[identifier] || []
+        @registrations[identifier.to_sym] || []
       end
 
       def normalize_identifier(identifier)
         if is_event_klass?(identifier)
           identifier.identifier
         else
-          identifier
+          identifier.to_sym
         end
       end
 
