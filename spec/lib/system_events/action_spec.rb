@@ -1,34 +1,34 @@
 require 'spec_helper'
 
+class SystemEvents::Action::MyActionHandler
+  def handle_call
+    action.my_action_handled!
+  end
+end
+
+class SystemEvents::Action::MyAction
+  include SystemEvents::Action
+
+  def call
+    'bar'
+  end
+
+  def my_action_handled!
+    'handled!'
+  end
+end
+
 describe SystemEvents::Action do
-  class SystemEvents::Action::FooHandler
-    def handle_call
-      action.foo_handled!
-    end
-  end
-
-  class SystemEvents::Action::Foo
-    include SystemEvents::Action
-
-    def call
-      'bar'
-    end
-
-    def foo_handled!
-      nil
-    end
-  end
-
-  describe 'event #call workflow' do
+  describe 'action #call workflow' do
     it 'invokes the handler class' do
-      event = SystemEvents::Action::Foo.new
-      expect(event).to receive(:foo_handled!).once
+      action = SystemEvents::Action::MyAction.new
+      expect(action).to receive(:foo_handled!).once
 
-      event.call
+      action.call
     end
 
     it 'allows #call to return its own value' do
-      expect(SystemEvents::Action::Foo.new.call).to eq('bar')
+      expect(SystemEvents::Action::MyAction.new.call).to eq('bar')
     end
   end
 end

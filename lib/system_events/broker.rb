@@ -1,46 +1,65 @@
-module SystemEvents
-  # @private
-  class Broker
-    @registrations = {}
+# @private
+class SystemEvents::Broker
+  @registrations = {}
+  @enabled = true
 
-    class << self
-      def process_event(event)
-        registrations_for(event.identifier).each do |registration|
-          registration.call event
-        end
-      end
+  class << self
+    attr_reader :enabled
 
-      def register(identifier, &callback)
-        identifier = normalize_identifier identifier
-        @registrations[identifier] ||= []
-        registrations_for(identifier) << SystemEvents::Registration.new(identifier, &callback)
-      end
+    def process_event(event)
+      return unless enabled?
 
-      def clear_registrations_for!(identifier)
-        @registrations[identifier.to_sym].clear
+      registrations_for(event).each do |registration|
+        registration.call event
       end
+    end
 
-      def clear_registrations!
-        @registrations.keys.each do |identifier|
-          self.clear_registrations_for! identifier
-        end
-      end
+    def register(identifier, &callback)
+      identifier = normalize_identifier identifier
+      @registrations[identifier] ||= []
+      registrations_for(identifier) << SystemEvents::Registration.new(identifier, &callback)
+    end
 
-      def registrations_for(identifier)
-        @registrations[identifier.to_sym] || []
+    def clear_registrations!
+      @registrations.keys.each do |identifier|
+        self.clear_registrations_for! identifier
       end
+    end
 
-      def normalize_identifier(identifier)
-        if is_event_klass?(identifier)
-          identifier.identifier
-        else
-          identifier.to_sym
-        end
-      end
+    def clear_registrations_for!(identifier)
+      identifier = normalize_identifier identifier
+      @registrations[identifier].clear
+    end
 
-      def is_event_klass?(identifier)
-        identifier.is_a?(Class) && identifier < SystemEvents::Event
+    def registrations_for(identifier)
+      identifier = normalize_identifier identifier
+      @registrations[identifier] || []
+    end
+
+    private
+
+    def normalize_identifier(identifier)
+      if is_event_klass?(identifier) || is_event_object?(identifier)
+        identifier.identifier
+      else
+        coerce_identifier_type identifier
       end
+    end
+
+    def is_event_klass?(identifier)
+      identifier.is_a?(Class) && identifier < SystemEvents::Event
+    end
+
+    def is_event_object?(identifier)
+      identifier.is_a? SystemEvents::Event
+    end
+
+    def coerce_identifier_type(identifier)
+      identifier.to_sym
+    end
+
+    def enabled?
+      enabled
     end
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SystemEvents::Emitter do
-  class Foo
+  class SystemEvents::Emitter::Foo
     extend SystemEvents::Emitter
 
     def foo
@@ -18,11 +18,11 @@ describe SystemEvents::Emitter do
     it 'sends a message to the broker' do
       expect(SystemEvents::Broker).to receive(:process_event).with(kind_of SystemEvents::Event)
 
-      Foo.new.foo
+      SystemEvents::Emitter::Foo.new.foo
     end
 
     it 'doesn\t disrupt normal operation' do
-      expect(Foo.new.foo).to eq('bar')
+      expect(SystemEvents::Emitter::Foo.new.foo).to eq('bar')
     end
   end
 
@@ -32,7 +32,7 @@ describe SystemEvents::Emitter do
 
       expect(SystemEvents::Broker).to receive(:process_event).with(kind_of SystemEvents::Event)
 
-      Foo.emit :foo, payload
+      SystemEvents::Emitter::Foo.emit :foo, payload
     end
 
     it 'can be called from an instance' do
@@ -40,7 +40,7 @@ describe SystemEvents::Emitter do
 
       expect(SystemEvents::Broker).to receive(:process_event).with(kind_of SystemEvents::Event)
 
-      Foo.new.emit 'foo', payload
+      SystemEvents::Emitter::Foo.new.emit 'foo', payload
     end
   end
 end

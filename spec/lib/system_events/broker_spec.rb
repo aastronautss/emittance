@@ -1,20 +1,20 @@
 require 'spec_helper'
 
 describe SystemEvents::Broker do
-  before { stub_const 'FooEvent', Class.new(SystemEvents::Event) }
+  before { stub_const 'SystemEvents::Broker::FooEvent', Class.new(SystemEvents::Event) }
 
   let(:emitter) { double 'emitter' }
   let(:timestamp) { Time.now }
   let(:payload) { 'hello' }
-  let(:event) { FooEvent.new emitter, timestamp, payload }
+  let(:event) { SystemEvents::Broker::FooEvent.new emitter, timestamp, payload }
 
   subject { SystemEvents::Broker }
 
   describe '.register' do
     it 'stores a registration' do
-      subject.register('foo') { |_| puts 'bar' }
+      subject.register('foo') { |_| 'bar' }
 
-      expect(subject.instance_variable_get('@registrations')[:foo]).to be_present
+      expect(subject.instance_variable_get('@registrations')[:system_events_broker_foo]).to be_present
     end
   end
 
@@ -25,7 +25,7 @@ describe SystemEvents::Broker do
       tester = double('tester')
       expect(tester).to receive(:bar)
 
-      subject.register('foo') do
+      subject.register(:system_events_broker_foo) do
         tester.bar
       end
 
@@ -36,8 +36,8 @@ describe SystemEvents::Broker do
       tester = double('tester')
       expect(tester).to receive(:bar)
 
-      subject.register('foo') do |event|
-        expect(event.identifier).to eq(:foo)
+      subject.register(:system_events_broker_foo) do |event|
+        expect(event.identifier).to eq(:system_events_broker_foo)
         expect(event.timestamp).to be_a(Time)
         expect(event.payload).to eq('hello')
 
@@ -49,11 +49,11 @@ describe SystemEvents::Broker do
   end
 
   describe '.clear_registrations_for!' do
-    let(:action) { subject.clear_registrations_for! 'foo' }
+    let(:action) { subject.clear_registrations_for! :system_events_broker_foo }
     after { subject.clear_registrations! }
 
     it 'clears a registration' do
-      subject.register('foo') { puts 'bar' }
+      subject.register(:system_events_broker_foo) { 'bar' }
 
       action
       expect(subject.registrations_for('foo')).to be_empty
