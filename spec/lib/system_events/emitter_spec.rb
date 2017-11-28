@@ -30,21 +30,17 @@ describe SystemEvents::Emitter do
     it 'sends a message to the broker' do
       payload = ['hello', 'world']
 
-      expect(SystemEvents::Broker).to(
-        receive(:process_event).with('foo', kind_of(Time), Foo, ['hello', 'world'])
-      )
+      expect(SystemEvents::Broker).to receive(:process_event).with(kind_of SystemEvents::Event)
 
-      Foo.emit 'foo', *payload
+      Foo.emit :foo, payload
     end
 
     it 'can be called from an instance' do
       payload = ['hello', 'world']
 
-      expect(SystemEvents::Broker).to(
-        receive(:process_event).with('foo', kind_of(Time), kind_of(Foo), ['hello', 'world'])
-      )
+      expect(SystemEvents::Broker).to receive(:process_event).with(kind_of SystemEvents::Event)
 
-      Foo.new.emit 'foo', *payload
+      Foo.new.emit 'foo', payload
     end
   end
 end

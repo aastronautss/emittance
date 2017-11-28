@@ -167,12 +167,12 @@ module SystemEvents::Action
           @action = action_obj
         end
 
-        watch SystemEvents::Action.emitting_event_name(action_klass) do |_, _, action_obj|
-          handler_obj = new(action_obj)
+        watch SystemEvents::Action.emitting_event_name(action_klass) do |event|
+          handler_obj = new(event.emitter)
           handler_method_name = SystemEvents::Action::HANDLER_METHOD_NAME
 
           if handler_obj.respond_to? handler_method_name
-            new(action_obj).send handler_method_name
+            handler_obj.send handler_method_name
           else
             raise
           end
@@ -187,7 +187,7 @@ module SystemEvents::Action
 
     # @private
     def emitting_event_name(action_klass)
-      SystemEvents::Emitter.emitting_method_event_name(action_klass, SystemEvents::Action::EMITTING_METHOD)
+      SystemEvents::Emitter.emitting_method_event(action_klass, SystemEvents::Action::EMITTING_METHOD)
     end
 
     # @private

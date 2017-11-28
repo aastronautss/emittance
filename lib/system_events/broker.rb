@@ -1,15 +1,17 @@
 module SystemEvents
+  # @private
   class Broker
     @registrations = {}
 
     class << self
-      def process_event(identifier, timestamp, emitter = nil, payload = [])
-        registrations_for(identifier).each do |registration|
-          registration.call timestamp, emitter, payload
+      def process_event(event)
+        registrations_for(event.identifier).each do |registration|
+          registration.call event
         end
       end
 
       def register(identifier, &callback)
+        identifier = normalize_identifier identifier
         @registrations[identifier] ||= []
         registrations_for(identifier) << SystemEvents::Registration.new(identifier, &callback)
       end
@@ -26,6 +28,14 @@ module SystemEvents
 
       def registrations_for(identifier)
         @registrations[identifier] || []
+      end
+
+      def normalize_identifier(identifier)
+        if identifier < SystemEvents::Event
+          identifier.identifier
+        else
+          identifier
+        end
       end
     end
   end

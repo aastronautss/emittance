@@ -4,9 +4,11 @@ describe SystemEvents::Event::EventBuilder do
   before do
     stub_const 'Foo', Class.new
     stub_const 'Bar', Class.new
+    stub_const 'Foo::Baz', Class.new
     stub_const 'FooBar', Class.new
     stub_const 'FooEvent', Class.new(SystemEvents::Event)
     stub_const 'FooBarEvent', Class.new(SystemEvents::Event)
+    stub_const 'FooBazEvent', Class.new(SystemEvents::Event)
   end
 
   describe 'objects_to_klass' do
@@ -62,6 +64,12 @@ describe SystemEvents::Event::EventBuilder do
         weird_identifier = '*()&/Foo, Bar!@!&&&&'
         value = SystemEvents::Event::EventBuilder.objects_to_klass(weird_identifier)
         expect(value).to eq(FooBarEvent)
+        expect(value < SystemEvents::Event).to be(true)
+      end
+
+      it 'can handle namespaced objects' do
+        value = SystemEvents::Event::EventBuilder.objects_to_klass(Foo::Baz)
+        expect(value).to eq(FooBazEvent)
         expect(value < SystemEvents::Event).to be(true)
       end
     end

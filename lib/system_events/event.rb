@@ -14,8 +14,8 @@ class SystemEvents::Event
   attr_reader :emitter, :timestamp, :payload
 
   def initialize(emitter, timestamp, payload)
-    @emitter = emitter,
-    @timestamp = timestamp,
+    @emitter = emitter
+    @timestamp = timestamp
     @payload = payload
   end
 

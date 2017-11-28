@@ -7,8 +7,8 @@ module SystemEvents
       @callback = callback
     end
 
-    def call(timestamp, emitter, payload)
-      @callback.call @identifier, timestamp, emitter, payload
+    def call(event)
+      @callback.call event
     end
   end
 end

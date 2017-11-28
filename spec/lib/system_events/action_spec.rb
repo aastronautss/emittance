@@ -3,7 +3,7 @@ require 'spec_helper'
 describe SystemEvents::Action do
   class SystemEvents::Action::FooHandler
     def handle_call
-      event.foo_handled!
+      action.foo_handled!
     end
   end
 
