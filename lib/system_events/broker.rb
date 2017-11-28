@@ -31,11 +31,15 @@ module SystemEvents
       end
 
       def normalize_identifier(identifier)
-        if identifier < SystemEvents::Event
+        if is_event_klass?(identifier)
           identifier.identifier
         else
           identifier
         end
+      end
+
+      def is_event_klass?(identifier)
+        identifier.is_a?(Class) && identifier < SystemEvents::Event
       end
     end
   end

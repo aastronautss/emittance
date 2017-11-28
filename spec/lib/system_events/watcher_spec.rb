@@ -1,10 +1,9 @@
-describe SystemEvents::Watcher do
-  class Foo
-    extend SystemEvents::Emitter
-  end
+require 'spec_helper'
 
-  class Bar
-    include SystemEvents::Watcher
+describe SystemEvents::Watcher do
+  before do
+    stub_const('Foo', Class.new { extend SystemEvents::Emitter })
+    stub_const('Bar', Class.new { include SystemEvents::Watcher })
   end
 
   after { SystemEvents::Broker.clear_registrations! }
@@ -15,21 +14,19 @@ describe SystemEvents::Watcher do
       expect(tester).to receive(:test_me)
 
       my_bar = Bar.new
-      my_bar.watch('test_foo') { |_| tester.test_me }
+      my_bar.watch(:test_foo) { |_| tester.test_me }
 
-      Foo.emit 'test_foo'
+      Foo.emit :test_foo, 'bar'
     end
 
     it 'passes the payload along' do
       tester = double('tester')
-      payload_1 = 'hello'
-      payload_2 = 'world'
-      expect(tester).to receive(:test_me).with(Foo, payload_1, payload_2)
+      expect(tester).to receive(:test_me).with(kind_of(SystemEvents::Event))
 
       my_bar = Bar.new
-      my_bar.watch('test_foo') { |identifier, timestamp, emitter, payload| tester.test_me(emitter, *payload) }
+      my_bar.watch(:test_foo) { |event| tester.test_me(event) }
 
-      Foo.emit 'test_foo', payload_1, payload_2
+      Foo.emit :test_foo, 'bar'
     end
   end
 end
