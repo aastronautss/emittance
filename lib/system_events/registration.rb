@@ -1,14 +1,13 @@
-module SystemEvents
-  class Registration
-    attr_reader :identifier
+# @private
+class SystemEvents::Registration
+  attr_reader :identifier
 
-    def initialize(identifier, &callback)
-      @identifier = identifier
-      @callback = callback
-    end
+  def initialize(identifier, &callback)
+    @identifier = identifier
+    @callback = callback
+  end
 
-    def call(event)
-      @callback.call event
-    end
+  def call(event)
+    @callback.call event
   end
 end

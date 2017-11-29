@@ -1,6 +1,4 @@
 ##
-# == Emitters
-# 
 # An emitter is any object that has the power to emit an event. Extend this module in any class whose singleton or 
 # instances you would like to have emit events.
 # 
