@@ -1,0 +1,31 @@
+example_id                                            | status | run_time        |
+----------------------------------------------------- | ------ | --------------- |
+./spec/emittance/action_spec.rb[1:1:1]                | passed | 0.0059 seconds  |
+./spec/emittance/action_spec.rb[1:1:2]                | passed | 0.0004 seconds  |
+./spec/emittance/broker_spec.rb[1:1:1]                | passed | 0.0011 seconds  |
+./spec/emittance/broker_spec.rb[1:2:1]                | passed | 0.00027 seconds |
+./spec/emittance/broker_spec.rb[1:2:2]                | passed | 0.0005 seconds  |
+./spec/emittance/broker_spec.rb[1:3:1]                | passed | 0.00016 seconds |
+./spec/emittance/broker_spec.rb[1:3:2]                | passed | 0.00012 seconds |
+./spec/emittance/broker_spec.rb[1:4:1]                | passed | 0.00012 seconds |
+./spec/emittance/broker_spec.rb[1:4:2]                | passed | 0.00014 seconds |
+./spec/emittance/emitter_spec.rb[1:1:1]               | passed | 0.00024 seconds |
+./spec/emittance/emitter_spec.rb[1:1:2]               | passed | 0.00011 seconds |
+./spec/emittance/emitter_spec.rb[1:2:1]               | passed | 0.0002 seconds  |
+./spec/emittance/emitter_spec.rb[1:2:2]               | passed | 0.00018 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:1] | passed | 0.00053 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:2] | passed | 0.00017 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:3] | passed | 0.00017 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:4] | passed | 0.00017 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:5] | passed | 0.00018 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:6] | passed | 0.00016 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:7] | passed | 0.00019 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:8] | passed | 0.00018 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:1:9] | passed | 0.00017 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:2:1] | passed | 0.00017 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:2:2] | passed | 0.00018 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:1:2:3] | passed | 0.00014 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:2:1]   | passed | 0.00018 seconds |
+./spec/emittance/event/event_builder_spec.rb[1:2:2]   | passed | 0.00017 seconds |
+./spec/emittance/watcher_spec.rb[1:1:1]               | passed | 0.00029 seconds |
+./spec/emittance/watcher_spec.rb[1:1:2]               | passed | 0.00025 seconds |

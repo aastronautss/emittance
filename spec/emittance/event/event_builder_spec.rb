@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Emittance::Event::EventBuilder do
+RSpec.describe Emittance::Event::EventBuilder do
   before do
     stub_const 'Foo', Class.new
     stub_const 'Bar', Class.new

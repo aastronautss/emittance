@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Emittance::Watcher do
+RSpec.describe Emittance::Watcher do
   before do
     stub_const('Foo', Class.new { extend Emittance::Emitter })
     stub_const('Bar', Class.new { include Emittance::Watcher })

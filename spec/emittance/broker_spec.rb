@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Emittance::Broker do
+RSpec.describe Emittance::Broker do
   before do
     stub_const 'Emittance::Broker::FooEvent', Class.new(Emittance::Event)
     stub_const 'Emittance::Broker::BarEvent', Class.new(Emittance::Event)
@@ -24,7 +24,7 @@ describe Emittance::Broker do
     it 'stores a registration' do
       subject.register(:emittance_broker_foo) { |_| 'bar' }
 
-      expect(subject.instance_variable_get('@registrations')[:emittance_broker_foo]).to be_present
+      expect(subject.instance_variable_get('@registrations')[:emittance_broker_foo]).to_not be_empty
     end
   end
 

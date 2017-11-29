@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Emittance::Emitter do
+RSpec.describe Emittance::Emitter do
   class Emittance::Emitter::Foo
     extend Emittance::Emitter
 

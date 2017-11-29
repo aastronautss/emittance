@@ -18,7 +18,7 @@ class Emittance::Action::MyAction
   end
 end
 
-describe Emittance::Action do
+RSpec.describe Emittance::Action do
   describe 'action #call workflow' do
     it 'invokes the handler class' do
       action = Emittance::Action::MyAction.new
