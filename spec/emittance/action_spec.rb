@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-class SystemEvents::Action::MyActionHandler
+class Emittance::Action::MyActionHandler
   def handle_call
     action.my_action_handled!
   end
 end
 
-class SystemEvents::Action::MyAction
-  include SystemEvents::Action
+class Emittance::Action::MyAction
+  include Emittance::Action
 
   def call
     'bar'
@@ -18,10 +18,10 @@ class SystemEvents::Action::MyAction
   end
 end
 
-describe SystemEvents::Action do
+describe Emittance::Action do
   describe 'action #call workflow' do
     it 'invokes the handler class' do
-      action = SystemEvents::Action::MyAction.new
+      action = Emittance::Action::MyAction.new
 
       expect(action).to receive(:my_action_handled!).once
 
@@ -29,7 +29,7 @@ describe SystemEvents::Action do
     end
 
     it 'allows #call to return its own value' do
-      expect(SystemEvents::Action::MyAction.new.call).to eq('bar')
+      expect(Emittance::Action::MyAction.new.call).to eq('bar')
     end
   end
 end

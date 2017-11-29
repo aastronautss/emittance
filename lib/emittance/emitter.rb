@@ -7,9 +7,9 @@
 # Whenever something warrants the emission of an event, you just need to call +#emit+ on that object. It is generally
 # a good practice for an object to emit its own events, but I'm not your mother so you can emit events from wherever
 # you want. It's probably not the best idea to do that, though. +#emit+ takes 2 params. First, it takes the identifier
-# for the event object type (which can also be the {SystemEvents::Event} class itself). See the "identifiers" section 
-# of {SystemEvents::Event} for more info on this. The second argument is the payload. This is basically whatever you 
-# want it to be, but you might want to standardize this on a per-event basis. The +SystemEvents+ will then (at this 
+# for the event object type (which can also be the {Emittance::Event} class itself). See the "identifiers" section 
+# of {Emittance::Event} for more info on this. The second argument is the payload. This is basically whatever you 
+# want it to be, but you might want to standardize this on a per-event basis. The +Emittance+ will then (at this 
 # time, synchronously) trigger each callback registered to listen for events of that identifier.
 # 
 # +Emitter+ also provides a vanity class method that allows you to emit an event whenever a given method is called. 
@@ -17,11 +17,11 @@
 # therefore, all listening callbacks are triggered) between the point at which the method finishes executing and the 
 # return value is passed to its invoker.
 #
-module SystemEvents::Emitter
+module Emittance::Emitter
   class << self
     # @private
     def extended(extender)
-      SystemEvents::Emitter.emitter_eval(extender) do
+      Emittance::Emitter.emitter_eval(extender) do
         include ClassAndInstanceMethods
         extend ClassAndInstanceMethods
       end
@@ -34,7 +34,7 @@ module SystemEvents::Emitter
 
     # @private
     def emitting_method_event(emitter_klass, method_name)
-      SystemEvents::Event.event_klass_for(emitter_klass, method_name)
+      Emittance::Event.event_klass_for(emitter_klass, method_name)
     end
 
     # @private
@@ -49,9 +49,9 @@ module SystemEvents::Emitter
 
   # Included and extended whenever {SystemEvent::Emitter} is extended.
   module ClassAndInstanceMethods
-    # Emits an {SystemEvents::Event event object} to watchers.
+    # Emits an {Emittance::Event event object} to watchers.
     # 
-    # @param identifier [Symbol, SystemEvents::Event] either an explicit Event object or the identifier that can be 
+    # @param identifier [Symbol, Emittance::Event] either an explicit Event object or the identifier that can be 
     #   parsed into an Event object.
     # @param payload [*] any additional information that might be helpful for an event's handler to have. Can be 
     #   standardized on a per-event basis by pre-defining the class associated with the 
@@ -78,27 +78,27 @@ module SystemEvents::Emitter
 
     # @private
     def _event_klass_for(*identifiers)
-      SystemEvents::Event.event_klass_for *identifiers
+      Emittance::Event.event_klass_for *identifiers
     end
 
     # @private
     def _send_to_broker(event)
-      SystemEvents::Broker.process_event event
+      Emittance::Broker.process_event event
     end
   end
 
   # Tells the class to emit an event when a any of the given set of methods. By default, the event classes are named 
   # accordingly: If a +Foo+ object +emits_on+ +:bar+, then the event's class will be named +FooBarEvent+, and will be
-  # a subclass of +SystemEvents::Event+.
+  # a subclass of +Emittance::Event+.
   # 
   # The payload for this event will be the value returned from the method call.
   #
   # @param method_names [Symbol, String, Array<Symbol, String>] the methods whose calls emit an event
   def emits_on(*method_names)
     method_names.each do |method_name|
-      non_emitting_method = SystemEvents::Emitter.non_emitting_method_for method_name
+      non_emitting_method = Emittance::Emitter.non_emitting_method_for method_name
 
-      SystemEvents::Emitter.emitter_eval(self) do
+      Emittance::Emitter.emitter_eval(self) do
         if method_defined?(non_emitting_method)
           warn "Already emitting on #{method_name.inspect}"
           return

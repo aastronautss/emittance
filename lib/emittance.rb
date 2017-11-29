@@ -1,4 +1,7 @@
-module SystemEvents
+require 'emittance/version'
+require 'emittance/broker'
+
+module Emittance
   class << self
     @enabled = true
 

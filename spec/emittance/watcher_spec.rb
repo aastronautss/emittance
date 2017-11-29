@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe SystemEvents::Watcher do
+describe Emittance::Watcher do
   before do
-    stub_const('Foo', Class.new { extend SystemEvents::Emitter })
-    stub_const('Bar', Class.new { include SystemEvents::Watcher })
+    stub_const('Foo', Class.new { extend Emittance::Emitter })
+    stub_const('Bar', Class.new { include Emittance::Watcher })
   end
 
-  after { SystemEvents::Broker.clear_registrations! }
+  after { Emittance::Broker.clear_registrations! }
 
   describe '#watch' do
     it 'watches for emissions' do
@@ -21,7 +21,7 @@ describe SystemEvents::Watcher do
 
     it 'passes the payload along' do
       tester = double('tester')
-      expect(tester).to receive(:test_me).with(kind_of(SystemEvents::Event))
+      expect(tester).to receive(:test_me).with(kind_of(Emittance::Event))
 
       my_bar = Bar.new
       my_bar.watch(:test_foo) { |event| tester.test_me(event) }

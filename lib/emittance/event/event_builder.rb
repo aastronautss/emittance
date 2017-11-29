@@ -1,5 +1,5 @@
 # @private
-class SystemEvents::Event::EventBuilder
+class Emittance::Event::EventBuilder
   KLASS_NAME_SUFFIX = 'Event'.freeze
 
   class << self
@@ -22,7 +22,7 @@ class SystemEvents::Event::EventBuilder
     private
 
     def pass_through?(args)
-      args.length == 1 && (args[0].is_a?(Class) && args[0] < SystemEvents::Event)
+      args.length == 1 && (args[0].is_a?(Class) && args[0] < Emittance::Event)
     end
 
     def klassable_name_for(obj)
@@ -67,7 +67,7 @@ class SystemEvents::Event::EventBuilder
     end
 
     def create_event_klass(klass_name)
-      new_klass = Class.new(SystemEvents::Event)
+      new_klass = Class.new(Emittance::Event)
       Object.const_set klass_name, new_klass
     end
   end

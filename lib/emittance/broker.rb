@@ -1,5 +1,5 @@
 # @private
-class SystemEvents::Broker
+class Emittance::Broker
   @registrations = {}
   @enabled = true
 
@@ -17,7 +17,7 @@ class SystemEvents::Broker
     def register(identifier, &callback)
       identifier = normalize_identifier identifier
       @registrations[identifier] ||= []
-      registrations_for(identifier) << SystemEvents::Registration.new(identifier, &callback)
+      registrations_for(identifier) << Emittance::Registration.new(identifier, &callback)
     end
 
     def clear_registrations!
@@ -47,11 +47,11 @@ class SystemEvents::Broker
     end
 
     def is_event_klass?(identifier)
-      identifier.is_a?(Class) && identifier < SystemEvents::Event
+      identifier.is_a?(Class) && identifier < Emittance::Event
     end
 
     def is_event_object?(identifier)
-      identifier.is_a? SystemEvents::Event
+      identifier.is_a? Emittance::Event
     end
 
     def coerce_identifier_type(identifier)

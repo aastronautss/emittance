@@ -1,5 +1,5 @@
 # @private
-class SystemEvents::Registration
+class Emittance::Registration
   attr_reader :identifier
 
   def initialize(identifier, &callback)

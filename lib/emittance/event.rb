@@ -1,13 +1,13 @@
-class SystemEvents::Event
+class Emittance::Event
   class << self
-    # @return [Symbol] the identifier that can be used by the {SystemEvents::Broker broker} to find event handlers.
+    # @return [Symbol] the identifier that can be used by the {Emittance::Broker broker} to find event handlers.
     def identifier
-      SystemEvents::Event::EventBuilder.klass_to_identifier self
+      Emittance::Event::EventBuilder.klass_to_identifier self
     end
 
     # @private
     def event_klass_for(*args)
-      SystemEvents::Event::EventBuilder.objects_to_klass *args
+      Emittance::Event::EventBuilder.objects_to_klass *args
     end
   end
 
