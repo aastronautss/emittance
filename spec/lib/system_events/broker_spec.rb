@@ -1,7 +1,17 @@
 require 'spec_helper'
 
 describe SystemEvents::Broker do
-  before { stub_const 'SystemEvents::Broker::FooEvent', Class.new(SystemEvents::Event) }
+  before do
+    stub_const 'SystemEvents::Broker::FooEvent', Class.new(SystemEvents::Event)
+    stub_const 'SystemEvents::Broker::BarEvent', Class.new(SystemEvents::Event)
+
+    @previous_registrations = SystemEvents::Broker.instance_variable_get '@registrations'
+    SystemEvents::Broker.instance_variable_set '@registrations', {}
+  end
+
+  after do
+    SystemEvents::Broker.instance_variable_set '@registrations', @previous_registrations
+  end
 
   let(:emitter) { double 'emitter' }
   let(:timestamp) { Time.now }
@@ -12,15 +22,13 @@ describe SystemEvents::Broker do
 
   describe '.register' do
     it 'stores a registration' do
-      subject.register('foo') { |_| 'bar' }
+      subject.register(:system_events_broker_foo) { |_| 'bar' }
 
       expect(subject.instance_variable_get('@registrations')[:system_events_broker_foo]).to be_present
     end
   end
 
   describe '.process_event' do
-    after { subject.clear_registrations! }
-
     it 'runs the registered callback' do
       tester = double('tester')
       expect(tester).to receive(:bar)
@@ -50,21 +58,20 @@ describe SystemEvents::Broker do
 
   describe '.clear_registrations_for!' do
     let(:action) { subject.clear_registrations_for! :system_events_broker_foo }
-    after { subject.clear_registrations! }
 
     it 'clears a registration' do
       subject.register(:system_events_broker_foo) { 'bar' }
 
       action
-      expect(subject.registrations_for('foo')).to be_empty
+      expect(subject.registrations_for(:system_events_broker_foo)).to be_empty
     end
 
     it 'does not clear registrations for other identifiers' do
-      subject.register('foo') { puts 'bar' }
-      subject.register('bar') { puts 'baz' }
+      subject.register(:system_events_broker_foo) { 'bar' }
+      subject.register(:system_events_broker_bar) { 'baz' }
 
       action
-      expect(subject.registrations_for('bar')).to_not be_empty
+      expect(subject.registrations_for(:system_events_broker_bar)).to_not be_empty
     end
   end
 
@@ -72,19 +79,19 @@ describe SystemEvents::Broker do
     let(:action) { subject.clear_registrations! }
 
     it 'clears a registration' do
-      subject.register('foo') { puts 'bar' }
+      subject.register(:system_events_broker_foo) { 'bar' }
 
       action
-      expect(subject.registrations_for('foo')).to be_empty
+      expect(subject.registrations_for(:system_events_broker_foo)).to be_empty
     end
 
     it 'clears multiple registrations' do
-      subject.register('foo') { puts 'bar' }
-      subject.register('bar') { puts 'baz' }
+      subject.register(:system_events_broker_foo) { 'bar' }
+      subject.register(:system_events_broker_bar) { 'baz' }
 
       action
-      expect(subject.registrations_for('foo')).to be_empty
-      expect(subject.registrations_for('bar')).to be_empty
+      expect(subject.registrations_for(:system_events_broker_foo)).to be_empty
+      expect(subject.registrations_for(:system_events_broker_bar)).to be_empty
     end
   end
 end

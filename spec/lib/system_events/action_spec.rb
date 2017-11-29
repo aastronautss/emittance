@@ -22,7 +22,8 @@ describe SystemEvents::Action do
   describe 'action #call workflow' do
     it 'invokes the handler class' do
       action = SystemEvents::Action::MyAction.new
-      expect(action).to receive(:foo_handled!).once
+
+      expect(action).to receive(:my_action_handled!).once
 
       action.call
     end

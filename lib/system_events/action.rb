@@ -173,8 +173,6 @@ module SystemEvents::Action
 
           if handler_obj.respond_to? handler_method_name
             handler_obj.send handler_method_name
-          else
-            raise
           end
         end
       end
