@@ -1,20 +1,20 @@
 ##
-# An emitter is any object that has the power to emit an event. Extend this module in any class whose singleton or 
+# An emitter is any object that has the power to emit an event. Extend this module in any class whose singleton or
 # instances you would like to have emit events.
-# 
+#
 # == Usage
-# 
+#
 # Whenever something warrants the emission of an event, you just need to call +#emit+ on that object. It is generally
 # a good practice for an object to emit its own events, but I'm not your mother so you can emit events from wherever
 # you want. It's probably not the best idea to do that, though. +#emit+ takes 2 params. First, it takes the identifier
-# for the event object type (which can also be the {Emittance::Event} class itself). See the "identifiers" section 
-# of {Emittance::Event} for more info on this. The second argument is the payload. This is basically whatever you 
-# want it to be, but you might want to standardize this on a per-event basis. The +Emittance+ will then (at this 
+# for the event object type (which can also be the {Emittance::Event} class itself). See the "identifiers" section
+# of {Emittance::Event} for more info on this. The second argument is the payload. This is basically whatever you
+# want it to be, but you might want to standardize this on a per-event basis. The +Emittance+ will then (at this
 # time, synchronously) trigger each callback registered to listen for events of that identifier.
-# 
-# +Emitter+ also provides a vanity class method that allows you to emit an event whenever a given method is called. 
-# This event gets triggered whenever an instance of the class finishes executing a method. This event is emitted (and 
-# therefore, all listening callbacks are triggered) between the point at which the method finishes executing and the 
+#
+# +Emitter+ also provides a vanity class method that allows you to emit an event whenever a given method is called.
+# This event gets triggered whenever an instance of the class finishes executing a method. This event is emitted (and
+# therefore, all listening callbacks are triggered) between the point at which the method finishes executing and the
 # return value is passed to its invoker.
 #
 module Emittance::Emitter
@@ -29,7 +29,7 @@ module Emittance::Emitter
 
     # @private
     def non_emitting_method_for(method_name)
-      "_non_emitting_#{method_name}".to_sym 
+      "_non_emitting_#{method_name}".to_sym
     end
 
     # @private
@@ -50,11 +50,11 @@ module Emittance::Emitter
   # Included and extended whenever {Emittance::Emitter} is extended.
   module ClassAndInstanceMethods
     # Emits an {Emittance::Event event object} to watchers.
-    # 
-    # @param identifier [Symbol, Emittance::Event] either an explicit Event object or the identifier that can be 
+    #
+    # @param identifier [Symbol, Emittance::Event] either an explicit Event object or the identifier that can be
     #   parsed into an Event object.
-    # @param payload [*] any additional information that might be helpful for an event's handler to have. Can be 
-    #   standardized on a per-event basis by pre-defining the class associated with the 
+    # @param payload [*] any additional information that might be helpful for an event's handler to have. Can be
+    #   standardized on a per-event basis by pre-defining the class associated with the
     def emit(identifier, payload)
       now = Time.now
       event_klass = _event_klass_for identifier
@@ -62,9 +62,9 @@ module Emittance::Emitter
       _send_to_broker event
     end
 
-    # If you don't know the specific identifier whose event you want to emit, you can send it a bunch of stuff and 
+    # If you don't know the specific identifier whose event you want to emit, you can send it a bunch of stuff and
     # +Emitter+ will automatically generate an +Event+ class for you.
-    # 
+    #
     # @param identifiers [*] anything that can be used to generate an +Event+ class.
     # @param payload (@see #emit)
     def emit_with_dynamic_identifier(*identifiers, payload:)
@@ -87,10 +87,10 @@ module Emittance::Emitter
     end
   end
 
-  # Tells the class to emit an event when a any of the given set of methods. By default, the event classes are named 
+  # Tells the class to emit an event when a any of the given set of methods. By default, the event classes are named
   # accordingly: If a +Foo+ object +emits_on+ +:bar+, then the event's class will be named +FooBarEvent+, and will be
   # a subclass of +Emittance::Event+.
-  # 
+  #
   # The payload for this event will be the value returned from the method call.
   #
   # @param method_names [Symbol, String, Array<Symbol, String>] the methods whose calls emit an event

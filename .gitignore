@@ -1,7 +1,16 @@
-# OS crabs
+# editor stuff
+.idea
+.idea/dataSources.xml
+tags
+*.sublime-workspace
+*.sublime-project
+.project
+
+# OS stuff
 .DS_Store
 tmp/**
 
+# CI stuff
 .yardoc
 .yardoc/**
 coverage/**
