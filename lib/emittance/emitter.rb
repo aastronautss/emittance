@@ -47,7 +47,7 @@ module Emittance::Emitter
     end
   end
 
-  # Included and extended whenever {SystemEvent::Emitter} is extended.
+  # Included and extended whenever {Emittance::Emitter} is extended.
   module ClassAndInstanceMethods
     # Emits an {Emittance::Event event object} to watchers.
     # 

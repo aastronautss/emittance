@@ -1,0 +1,4 @@
+--protected
+--no-private
+'lib/**/*.rb'
+--readme README.md

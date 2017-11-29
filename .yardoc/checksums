@@ -1,0 +1,9 @@
+lib/emittance.rb 67b55a004f6bcd3b1ec0fde060db41ffc4878ee9
+lib/emittance/event.rb 177c757690b3f65433da406693d4bdde714f825c
+lib/emittance/action.rb abdc220315ac2833c9a9bb9aa5dbb2fd98e1f8d4
+lib/emittance/broker.rb ce0eaffddc0659b7bf77e0ea4536b36028fc78b4
+lib/emittance/emitter.rb 4cfa97ea23d1a84d5e262ae30d18822c4611fc37
+lib/emittance/version.rb b2f2fe6e1ea8cc652db1ac938c031c206eced53f
+lib/emittance/watcher.rb a83bb7b79cb2143fa88c9325a967bd4bdc60b973
+lib/emittance/registration.rb 448e4326363c92fd6d1ba5f1ae4e2d305939510c
+lib/emittance/event/event_builder.rb 38e6015ce125f06406c7d851e82fffbc726edd13
