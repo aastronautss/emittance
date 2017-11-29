@@ -1,0 +1,8 @@
+# OS crabs
+.DS_Store
+tmp/**
+
+.yardoc
+.yardoc/**
+coverage/**
+doc/**
