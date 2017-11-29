@@ -7,11 +7,12 @@ Gem::Specification.new do |spec|
   spec.name          = 'emittance'
   spec.version       = Emittance::VERSION
   spec.authors       = ['Tyler Guillen']
-  spec.email         = ['tyguillen@gmail.com']
+  spec.email         = ['tyler@tylerguillen.com']
 
-  spec.summary       = %q{A robust eventing library for Ruby.}
-  spec.description   = %q{A robust eventing library for Ruby.}
-  spec.homepage      = 'https://www.touchofmodern.com'
+  spec.summary       = %q{A robust and flexible eventing library for Ruby.}
+  spec.description   = %q{A robust and flexible eventing library for Ruby.}
+  spec.homepage      = 'https://github.com/aastronautss/emittance'
+  spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
