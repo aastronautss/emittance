@@ -4,11 +4,13 @@ class Emittance::Event::EventBuilder
 
   class << self
     def object_to_klass(obj)
-      return obj if pass_klass_through?(obj)
+      klass = nil
 
-      klass_name = klassable_name_for obj
-      klass_name = dress_up_klass_name klass_name
-      find_or_create_event_klass klass_name
+      klass ||= pass_klass_through(obj)
+      klass ||= find_by_custom_identifier(obj)
+      klass ||= generate_event_klass(obj)
+
+      klass
     end
 
     def klass_to_identifier(klass)
@@ -21,8 +23,18 @@ class Emittance::Event::EventBuilder
 
     private
 
-    def pass_klass_through?(obj)
-      obj.is_a?(Class) && obj < Emittance::Event
+    def pass_klass_through(obj)
+      obj.is_a?(Class) && obj < Emittance::Event ? obj : nil
+    end
+
+    def find_by_custom_identifier(identifier)
+      CustomIdentifiers.event_klass_for identifier
+    end
+
+    def generate_event_klass(obj)
+      klass_name = klassable_name_for obj
+      klass_name = dress_up_klass_name klass_name
+      find_or_create_event_klass klass_name
     end
 
     def klassable_name_for(obj)
@@ -69,6 +81,27 @@ class Emittance::Event::EventBuilder
     def create_event_klass(klass_name)
       new_klass = Class.new(Emittance::Event)
       Object.const_set klass_name, new_klass
+    end
+  end
+
+  class CustomIdentifiers
+    class InvalidIdentifierError < StandardError; end
+
+    @mappings = {}
+
+    class << self
+      def mapping_esists?(identifier)
+        !!@mappings[identifier]
+      end
+
+      def event_klass_for(identifier)
+        @mappings[identifier]
+      end
+
+      def set(identifier, event_klass)
+        raise InvalidIdentifierError unless identifier.is_a?(Symbol)
+        @mappings[identifier] = event_klass
+      end
     end
   end
 end
