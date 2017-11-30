@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/aastronautss/emittance.svg?branch=master)](https://travis-ci.org/aastronautss/emittance)
+
 # Emittance
 
 Emittance is a flexible eventing library that provides a clean interface for both emitting and capturing events. It follows the following workflow:
