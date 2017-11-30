@@ -18,6 +18,7 @@
 # return value is passed to its invoker.
 #
 module Emittance::Emitter
+  # :nocov:
   class << self
     # @private
     def extended(extender)
@@ -46,6 +47,7 @@ module Emittance::Emitter
       end
     end
   end
+  # :nocov:
 
   # Included and extended whenever {Emittance::Emitter} is extended.
   module ClassAndInstanceMethods
