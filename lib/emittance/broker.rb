@@ -20,6 +20,10 @@ class Emittance::Broker
       registrations_for(identifier) << Emittance::Registration.new(identifier, &callback)
     end
 
+    def register_method_call(identifier, object, method_name)
+      register identifier, &lambda_for_method_call(object, method_name)
+    end
+
     def clear_registrations!
       @registrations.keys.each do |identifier|
         self.clear_registrations_for! identifier
@@ -44,6 +48,10 @@ class Emittance::Broker
       else
         coerce_identifier_type identifier
       end
+    end
+
+    def lambda_for_method_call(object, method_name)
+      ->(event) { object.send method_name, event }
     end
 
     def is_event_klass?(identifier)

@@ -34,7 +34,7 @@ module Emittance::Emitter
 
     # @private
     def emitting_method_event(emitter_klass, method_name)
-      Emittance::Event.event_klass_for(emitter_klass, method_name)
+      Emittance::Event.event_klass_for(emitter_klass)
     end
 
     # @private
@@ -58,18 +58,6 @@ module Emittance::Emitter
     def emit(identifier, payload)
       now = Time.now
       event_klass = _event_klass_for identifier
-      event = event_klass.new(self, now, payload)
-      _send_to_broker event
-    end
-
-    # If you don't know the specific identifier whose event you want to emit, you can send it a bunch of stuff and
-    # +Emitter+ will automatically generate an +Event+ class for you.
-    #
-    # @param identifiers [*] anything that can be used to generate an +Event+ class.
-    # @param payload (@see #emit)
-    def emit_with_dynamic_identifier(*identifiers, payload:)
-      now = Time.now
-      event_klass = _event_klass_for *identifiers
       event = event_klass.new(self, now, payload)
       _send_to_broker event
     end
@@ -109,7 +97,7 @@ module Emittance::Emitter
         module_eval <<-RUBY, __FILE__, __LINE__ + 1
           def #{method_name}(*args, &blk)
             return_value = #{non_emitting_method}(*args, &blk)
-            emit_with_dynamic_identifier self.class, __method__, payload: return_value
+            emit self.class, return_value
             return_value
           end
         RUBY

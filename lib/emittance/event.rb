@@ -6,8 +6,8 @@ class Emittance::Event
     end
 
     # @private
-    def event_klass_for(*args)
-      Emittance::Event::EventBuilder.objects_to_klass *args
+    def event_klass_for(identifier)
+      Emittance::Event::EventBuilder.object_to_klass identifier
     end
   end
 

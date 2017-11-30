@@ -138,8 +138,8 @@ module Emittance::Action
 
   class NoHandlerMethodError < StandardError; end
 
+  # @private
   class << self
-    # @private
     def included(action_klass)
       handler_klass_name = Emittance::Action.handler_klass_name(action_klass)
       handler_klass = Emittance::Action.find_or_create_klass(handler_klass_name)
@@ -162,7 +162,6 @@ module Emittance::Action
 
         extend Emittance::Watcher
 
-        # @private
         def initialize(action_obj)
           @action = action_obj
         end

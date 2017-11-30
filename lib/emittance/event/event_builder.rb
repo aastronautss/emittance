@@ -3,11 +3,11 @@ class Emittance::Event::EventBuilder
   KLASS_NAME_SUFFIX = 'Event'.freeze
 
   class << self
-    def objects_to_klass(*args)
-      return args[0] if pass_through?(args)
+    def object_to_klass(obj)
+      return obj if pass_klass_through?(obj)
 
-      klass_name_parts = args.map { |arg| klassable_name_for arg }
-      klass_name = dress_up_klass_name klass_name_parts
+      klass_name = klassable_name_for obj
+      klass_name = dress_up_klass_name klass_name
       find_or_create_event_klass klass_name
     end
 
@@ -21,8 +21,8 @@ class Emittance::Event::EventBuilder
 
     private
 
-    def pass_through?(args)
-      args.length == 1 && (args[0].is_a?(Class) && args[0] < Emittance::Event)
+    def pass_klass_through?(obj)
+      obj.is_a?(Class) && obj < Emittance::Event
     end
 
     def klassable_name_for(obj)
@@ -50,8 +50,8 @@ class Emittance::Event::EventBuilder
       str.gsub /[^A-Za-z\d]/, ''
     end
 
-    def dress_up_klass_name(klass_name_parts)
-      "#{klass_name_parts.join}#{KLASS_NAME_SUFFIX}"
+    def dress_up_klass_name(klass_name)
+      "#{klass_name}#{KLASS_NAME_SUFFIX}"
     end
 
     def undress_klass_name(klass_name_str)

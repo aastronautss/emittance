@@ -10,7 +10,7 @@ RSpec.describe Emittance::Watcher do
 
   describe '#watch' do
     it 'watches for emissions' do
-      tester = double('tester')
+      tester = double 'tester'
       expect(tester).to receive(:test_me)
 
       my_bar = Bar.new
@@ -25,6 +25,15 @@ RSpec.describe Emittance::Watcher do
 
       my_bar = Bar.new
       my_bar.watch(:test_foo) { |event| tester.test_me(event) }
+
+      Foo.emit :test_foo, 'bar'
+    end
+
+    it 'can take a method name as a param instead of a block' do
+      my_bar = Bar.new
+      my_bar.watch :test_foo, :foo_emitted
+
+      expect(my_bar).to receive(:foo_emitted)
 
       Foo.emit :test_foo, 'bar'
     end
