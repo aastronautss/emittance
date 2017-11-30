@@ -136,8 +136,6 @@ module Emittance::Action
   EMITTING_METHOD = :call
   HANDLER_METHOD_NAME = "handle_#{EMITTING_METHOD}".to_sym
 
-  class NoHandlerMethodError < StandardError; end
-
   # @private
   class << self
     def included(action_klass)
@@ -190,10 +188,20 @@ module Emittance::Action
     # @private
     def find_or_create_klass(klass_name)
       unless Object.const_defined? klass_name
-        Object.const_set klass_name, Class.new(Object)
+        set_namespaced_constant_by_name klass_name, Class.new
       end
 
       Object.const_get klass_name
+    end
+
+    private
+
+    def set_namespaced_constant_by_name(const_name, obj)
+      names = const_name.split("::".freeze)
+      names.shift if names.size > 1 && names.first.empty?
+
+      namespace = names.size == 1 ? Object : Object.const_get(names[0...-1].join('::'.freeze))
+      namespace.const_set names.last, obj
     end
   end
 end
