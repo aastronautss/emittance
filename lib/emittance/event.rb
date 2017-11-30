@@ -2,12 +2,16 @@ class Emittance::Event
   class << self
     # @return [Symbol] the identifier that can be used by the {Emittance::Broker broker} to find event handlers.
     def identifier
-      Emittance::Event::EventBuilder.klass_to_identifier self
+      EventBuilder.klass_to_identifier self
+    end
+
+    def identifier=(sym)
+      EventBuilder.register_custom_identifier self, sym
     end
 
     # @private
-    def event_klass_for(identifier)
-      Emittance::Event::EventBuilder.object_to_klass identifier
+    def event_klass_for(*identifier)
+      EventBuilder.objects_to_klass *identifier
     end
   end
 

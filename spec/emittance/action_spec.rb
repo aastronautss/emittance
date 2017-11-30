@@ -1,11 +1,5 @@
 require 'spec_helper'
 
-class Emittance::Action::MyActionHandler
-  def handle_call
-    action.my_action_handled!
-  end
-end
-
 class Emittance::Action::MyAction
   include Emittance::Action
 
@@ -15,6 +9,12 @@ class Emittance::Action::MyAction
 
   def my_action_handled!
     'handled!'
+  end
+end
+
+class Emittance::Action::MyActionHandler
+  def handle_call
+    action.my_action_handled!
   end
 end
 

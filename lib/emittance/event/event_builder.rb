@@ -3,26 +3,59 @@ class Emittance::Event::EventBuilder
   KLASS_NAME_SUFFIX = 'Event'.freeze
 
   class << self
-    def object_to_klass(obj)
-      return obj if pass_klass_through?(obj)
+    def objects_to_klass(*objs)
+      klass = nil
 
-      klass_name = klassable_name_for obj
-      klass_name = dress_up_klass_name klass_name
-      find_or_create_event_klass klass_name
+      klass ||= pass_klass_through(*objs)
+      klass ||= find_by_custom_identifier(*objs)
+      klass ||= generate_event_klass(*objs)
+
+      klass
     end
 
     def klass_to_identifier(klass)
+      identifier = nil
+
+      identifier ||= reverse_find_by_custom_identifier(klass)
+      identifier ||= convert_klass_to_identifier(klass)
+
+      identifier
+    end
+
+    def register_custom_identifier(klass, identifier)
+      CustomIdentifiers.set identifier, klass
+    end
+
+    private
+
+    def pass_klass_through(*objs)
+      objs.length == 1 && objs[0].is_a?(Class) && objs[0] < Emittance::Event ? objs[0] : nil
+    end
+
+    def find_by_custom_identifier(*objs)
+      if objs.length == 1
+        CustomIdentifiers.event_klass_for objs[0]
+      else
+        nil
+      end
+    end
+
+    def reverse_find_by_custom_identifier(klass)
+      CustomIdentifiers.identifier_for klass
+    end
+
+    def generate_event_klass(*objs)
+      klass_name_parts = objs.map { |obj| klassable_name_for obj }
+      klass_name = dress_up_klass_name klass_name_parts
+      find_or_create_event_klass klass_name
+    end
+
+    def convert_klass_to_identifier(klass)
       identifier_str = klass.name
       identifier_str = undress_klass_name identifier_str
       identifier_str = snake_case identifier_str
 
       identifier_str.to_sym
-    end
-
-    private
-
-    def pass_klass_through?(obj)
-      obj.is_a?(Class) && obj < Emittance::Event
     end
 
     def klassable_name_for(obj)
@@ -50,8 +83,8 @@ class Emittance::Event::EventBuilder
       str.gsub /[^A-Za-z\d]/, ''
     end
 
-    def dress_up_klass_name(klass_name)
-      "#{klass_name}#{KLASS_NAME_SUFFIX}"
+    def dress_up_klass_name(klass_name_parts)
+      "#{klass_name_parts.join}#{KLASS_NAME_SUFFIX}"
     end
 
     def undress_klass_name(klass_name_str)
@@ -69,6 +102,34 @@ class Emittance::Event::EventBuilder
     def create_event_klass(klass_name)
       new_klass = Class.new(Emittance::Event)
       Object.const_set klass_name, new_klass
+    end
+  end
+
+  class CustomIdentifiers
+    @mappings = {}
+
+    class << self
+      def mapping_exists?(identifier)
+        !!mappings[identifier]
+      end
+
+      def event_klass_for(identifier)
+        mappings[identifier]
+      end
+
+      def identifier_for(event_klass)
+        mappings.key event_klass
+      end
+
+      def set(identifier, event_klass)
+        raise Emittance::InvalidIdentifierError unless identifier.is_a? Symbol
+        raise Emittance::IdentifierTakenError if mapping_exists? identifier
+        mappings[identifier] = event_klass
+      end
+
+      private
+
+      attr_reader :mappings
     end
   end
 end
