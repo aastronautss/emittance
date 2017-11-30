@@ -1,8 +1,14 @@
 # Emittance
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/emittance`. To experiment with that code, run `bin/console` for an interactive prompt.
+Emittance is a flexible eventing library that provides a clean interface for both emitting and capturing events. It follows the following workflow:
 
-TODO: Delete this and the text above, and describe your gem
+1. Objects (and therefore, classes) can emit events, identified by a symbol.
+2. Events are objects that know who emitted them. Their
+3. Objects (and therefore, classes) can watch for events that get emitted.
+
+Per this pattern, objects are responsible for knowing what events they want to listen to. While this is pragmatically the same as a "push"-style message system (watchers don't need to go check a topic themselves), the semantics are a little different.
+
+I created this library because I was dissatisfied with the options currently available, and I wanted to see if I could make something that I would enjoy using.
 
 ## Installation
 
@@ -22,7 +28,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Coming soon!
 
 ## Development
 
@@ -32,4 +38,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/test.
+Bug reports and pull requests are welcome on GitHub at https://github.com/aastronauts/emittance.
