@@ -1,4 +1,6 @@
 require 'emittance/version'
+require 'emittance/errors'
+
 require 'emittance/registration'
 require 'emittance/event'
 require 'emittance/event/event_builder'

@@ -14,11 +14,16 @@ class Emittance::Event::EventBuilder
     end
 
     def klass_to_identifier(klass)
-      identifier_str = klass.name
-      identifier_str = undress_klass_name identifier_str
-      identifier_str = snake_case identifier_str
+      identifier = nil
 
-      identifier_str.to_sym
+      identifier ||= reverse_find_by_custom_identifier(klass)
+      identifier ||= convert_klass_to_identifier(klass)
+
+      identifier
+    end
+
+    def register_custom_identifier(klass, identifier)
+      CustomIdentifiers.set identifier, klass
     end
 
     private
@@ -35,10 +40,22 @@ class Emittance::Event::EventBuilder
       end
     end
 
+    def reverse_find_by_custom_identifier(klass)
+      CustomIdentifiers.identifier_for klass
+    end
+
     def generate_event_klass(*objs)
       klass_name_parts = objs.map { |obj| klassable_name_for obj }
       klass_name = dress_up_klass_name klass_name_parts
       find_or_create_event_klass klass_name
+    end
+
+    def convert_klass_to_identifier(klass)
+      identifier_str = klass.name
+      identifier_str = undress_klass_name identifier_str
+      identifier_str = snake_case identifier_str
+
+      identifier_str.to_sym
     end
 
     def klassable_name_for(obj)
@@ -89,23 +106,30 @@ class Emittance::Event::EventBuilder
   end
 
   class CustomIdentifiers
-    class InvalidIdentifierError < StandardError; end
-
     @mappings = {}
 
     class << self
-      def mapping_esists?(identifier)
-        !!@mappings[identifier]
+      def mapping_exists?(identifier)
+        !!mappings[identifier]
       end
 
       def event_klass_for(identifier)
-        @mappings[identifier]
+        mappings[identifier]
+      end
+
+      def identifier_for(event_klass)
+        mappings.key event_klass
       end
 
       def set(identifier, event_klass)
-        raise InvalidIdentifierError unless identifier.is_a?(Symbol)
-        @mappings[identifier] = event_klass
+        raise Emittance::InvalidIdentifierError unless identifier.is_a? Symbol
+        raise Emittance::IdentifierTakenError if mapping_exists? identifier
+        mappings[identifier] = event_klass
       end
+
+      private
+
+      attr_reader :mappings
     end
   end
 end
