@@ -3,12 +3,12 @@ class Emittance::Event::EventBuilder
   KLASS_NAME_SUFFIX = 'Event'.freeze
 
   class << self
-    def object_to_klass(obj)
+    def objects_to_klass(*objs)
       klass = nil
 
-      klass ||= pass_klass_through(obj)
-      klass ||= find_by_custom_identifier(obj)
-      klass ||= generate_event_klass(obj)
+      klass ||= pass_klass_through(*objs)
+      klass ||= find_by_custom_identifier(*objs)
+      klass ||= generate_event_klass(*objs)
 
       klass
     end
@@ -23,17 +23,21 @@ class Emittance::Event::EventBuilder
 
     private
 
-    def pass_klass_through(obj)
-      obj.is_a?(Class) && obj < Emittance::Event ? obj : nil
+    def pass_klass_through(*objs)
+      objs.length == 1 && objs[0].is_a?(Class) && objs[0] < Emittance::Event ? objs[0] : nil
     end
 
-    def find_by_custom_identifier(identifier)
-      CustomIdentifiers.event_klass_for identifier
+    def find_by_custom_identifier(*objs)
+      if objs.length == 1
+        CustomIdentifiers.event_klass_for objs[0]
+      else
+        nil
+      end
     end
 
-    def generate_event_klass(obj)
-      klass_name = klassable_name_for obj
-      klass_name = dress_up_klass_name klass_name
+    def generate_event_klass(*objs)
+      klass_name_parts = objs.map { |obj| klassable_name_for obj }
+      klass_name = dress_up_klass_name klass_name_parts
       find_or_create_event_klass klass_name
     end
 
@@ -62,8 +66,8 @@ class Emittance::Event::EventBuilder
       str.gsub /[^A-Za-z\d]/, ''
     end
 
-    def dress_up_klass_name(klass_name)
-      "#{klass_name}#{KLASS_NAME_SUFFIX}"
+    def dress_up_klass_name(klass_name_parts)
+      "#{klass_name_parts.join}#{KLASS_NAME_SUFFIX}"
     end
 
     def undress_klass_name(klass_name_str)

@@ -136,8 +136,6 @@ module Emittance::Action
   EMITTING_METHOD = :call
   HANDLER_METHOD_NAME = "handle_#{EMITTING_METHOD}".to_sym
 
-  class NoHandlerMethodError < StandardError; end
-
   # @private
   class << self
     def included(action_klass)
