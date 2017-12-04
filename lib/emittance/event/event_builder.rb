@@ -55,7 +55,7 @@ class Emittance::Event::EventBuilder
     end
 
     def generate_event_klass(*objs)
-      klass_name = generate_event_klass_name *objs
+      klass_name = generate_event_klass_name(*objs)
       find_or_create_event_klass klass_name
     end
 
