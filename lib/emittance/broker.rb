@@ -39,7 +39,7 @@ class Emittance::Broker
 
     def registrations_for(identifier)
       identifier = normalize_identifier identifier
-      @registrations[identifier] || []
+      @registrations[identifier] || Set.new
     end
 
     private
