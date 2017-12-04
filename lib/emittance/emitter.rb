@@ -57,11 +57,14 @@ module Emittance::Emitter
     #   parsed into an Event object.
     # @param payload [*] any additional information that might be helpful for an event's handler to have. Can be
     #   standardized on a per-event basis by pre-defining the class associated with the
-    def emit(identifier, payload)
+    #
+    # @return the payload
+    def emit(identifier, payload = nil)
       now = Time.now
       event_klass = _event_klass_for identifier
       event = event_klass.new(self, now, payload)
       _send_to_broker event
+      payload
     end
 
     # If you don't know the specific identifier whose event you want to emit, you can send it a bunch of stuff and
