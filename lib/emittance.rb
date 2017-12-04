@@ -11,18 +11,16 @@ require 'emittance/broker'
 
 module Emittance
   class << self
-    @enabled = true
+    def enable!
+      Emittance::Broker.enable!
+    end
+
+    def disable!
+      Emittance::Broker.disable!
+    end
 
     def enabled?
-      !!@enabled
-    end
-
-    def enable
-      @enabled = true
-    end
-
-    def disable
-      @enabled = false
+      Emittance::Broker.enabled?
     end
   end
 end

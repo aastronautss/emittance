@@ -10,10 +10,6 @@ RSpec.describe Emittance::Emitter do
     emits_on :foo
   end
 
-  before do
-    Emittance.disable
-  end
-
   describe '.emits_on' do
     it 'sends a message to the broker' do
       expect(Emittance::Broker).to receive(:process_event).with(kind_of Emittance::Event)
