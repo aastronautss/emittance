@@ -22,5 +22,9 @@ module Emittance
     def enabled?
       Emittance::Broker.enabled?
     end
+
+    def suppress(&blk)
+      Emittance::Broker.suppress &blk
+    end
   end
 end
