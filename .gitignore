@@ -15,3 +15,6 @@ tmp/**
 .yardoc/**
 coverage/**
 doc/**
+
+# Other
+.rspec_status
