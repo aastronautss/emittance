@@ -1,6 +1,5 @@
 module Emittance
-  # @private
   class InvalidIdentifierError < StandardError; end
-  # @private
   class IdentifierTakenError < StandardError; end
+  class InvalidPayloadError < StandardError; end
 end

@@ -1,3 +1,5 @@
+require 'set'
+
 # @private
 class Emittance::Broker
   @registrations = {}
@@ -16,7 +18,7 @@ class Emittance::Broker
 
     def register(identifier, &callback)
       identifier = normalize_identifier identifier
-      @registrations[identifier] ||= []
+      @registrations[identifier] ||= Set.new
       registrations_for(identifier) << Emittance::Registration.new(identifier, &callback)
     end
 
