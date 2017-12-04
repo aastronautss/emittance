@@ -23,6 +23,10 @@ RSpec.describe Emittance::Event do
         BarEvent.add_identifier :dont_take_me_please
         expect { subject.add_identifier :dont_take_me_please }.to raise_error(Emittance::IdentifierTakenError)
       end
+
+      it 'raises when a class already resolves to the identifier' do
+        expect { BarEvent.add_identifier :foo }.to raise_error(Emittance::IdentifierTakenError)
+      end
     end
   end
 end
