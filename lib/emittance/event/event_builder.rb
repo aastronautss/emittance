@@ -3,6 +3,11 @@ class Emittance::Event::EventBuilder
   KLASS_NAME_SUFFIX = 'Event'.freeze
 
   class << self
+    def klass_exists_for_identifier?(identifier)
+      klass_name = generate_event_klass_name identifier
+      !!lookup_event_klass(klass_name)
+    end
+
     def objects_to_klass(*objs)
       klass = nil
 
@@ -44,9 +49,13 @@ class Emittance::Event::EventBuilder
       CustomIdentifiers.identifier_for klass
     end
 
-    def generate_event_klass(*objs)
+    def generate_event_klass_name(*objs)
       klass_name_parts = objs.map { |obj| klassable_name_for obj }
-      klass_name = dress_up_klass_name klass_name_parts
+      dress_up_klass_name klass_name_parts
+    end
+
+    def generate_event_klass(*objs)
+      klass_name = generate_event_klass_name *objs
       find_or_create_event_klass klass_name
     end
 
@@ -84,19 +93,23 @@ class Emittance::Event::EventBuilder
     end
 
     def dress_up_klass_name(klass_name_parts)
-      "#{klass_name_parts.join}#{KLASS_NAME_SUFFIX}"
+      "#{Array(klass_name_parts).join}#{KLASS_NAME_SUFFIX}"
     end
 
     def undress_klass_name(klass_name_str)
       klass_name_str.gsub /#{KLASS_NAME_SUFFIX}$/, ''
     end
 
-    def find_or_create_event_klass(klass_name)
-      unless Object.const_defined? klass_name
-        create_event_klass klass_name
+    def lookup_event_klass(klass_name)
+      if Object.const_defined? klass_name
+        Object.const_get klass_name
+      else
+        nil
       end
+    end
 
-      Object.const_get klass_name
+    def find_or_create_event_klass(klass_name)
+      lookup_event_klass(klass_name) || create_event_klass(klass_name)
     end
 
     def create_event_klass(klass_name)
@@ -110,7 +123,7 @@ class Emittance::Event::EventBuilder
 
     class << self
       def mapping_exists?(identifier)
-        !!mappings[identifier]
+        !!mappings[identifier] || Emittance::Event::EventBuilder.klass_exists_for_identifier?(identifier)
       end
 
       def event_klass_for(identifier)
@@ -122,7 +135,7 @@ class Emittance::Event::EventBuilder
       end
 
       def set(identifier, event_klass)
-        raise Emittance::InvalidIdentifierError unless identifier.is_a? Symbol
+        raise Emittance::InvalidIdentifierError, 'Event identifiers must be a Symbol.' unless identifier.is_a? Symbol
         raise Emittance::IdentifierTakenError if mapping_exists? identifier
         mappings[identifier] = event_klass
       end
