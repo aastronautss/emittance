@@ -1,7 +1,7 @@
 require 'set'
 
 # @private
-class Emittance::Broker
+class Emittance::Dispatcher
   @registrations = {}
   @enabled = true
 

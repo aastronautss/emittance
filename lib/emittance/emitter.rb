@@ -77,6 +77,7 @@ module Emittance::Emitter
       event_klass = _event_klass_for *identifiers
       event = event_klass.new(self, now, payload)
       _send_to_broker event
+      payload
     end
 
     private
@@ -88,7 +89,7 @@ module Emittance::Emitter
 
     # @private
     def _send_to_broker(event)
-      Emittance::Broker.process_event event
+      Emittance::Dispatcher.process_event event
     end
   end
 

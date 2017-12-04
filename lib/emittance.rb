@@ -7,24 +7,24 @@ require 'emittance/event/event_builder'
 require 'emittance/emitter'
 require 'emittance/watcher'
 require 'emittance/action'
-require 'emittance/broker'
+require 'emittance/dispatcher'
 
 module Emittance
   class << self
     def enable!
-      Emittance::Broker.enable!
+      Emittance::Dispatcher.enable!
     end
 
     def disable!
-      Emittance::Broker.disable!
+      Emittance::Dispatcher.disable!
     end
 
     def enabled?
-      Emittance::Broker.enabled?
+      Emittance::Dispatcher.enabled?
     end
 
     def suppress(&blk)
-      Emittance::Broker.suppress(&blk)
+      Emittance::Dispatcher.suppress(&blk)
     end
   end
 end

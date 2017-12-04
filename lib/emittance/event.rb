@@ -37,7 +37,7 @@
 #
 class Emittance::Event
   class << self
-    # @return [Symbol] the identifier that can be used by the {Emittance::Broker broker} to find event handlers
+    # @return [Symbol] the identifier that can be used by the {Emittance::Dispatcher dispatcher} to find event handlers
     def identifier
       EventBuilder.klass_to_identifier self
     end
