@@ -24,7 +24,7 @@ module Emittance
     end
 
     def suppress(&blk)
-      Emittance::Broker.suppress &blk
+      Emittance::Broker.suppress(&blk)
     end
   end
 end

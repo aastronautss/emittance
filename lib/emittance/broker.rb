@@ -79,8 +79,6 @@ class Emittance::Broker
     def coerce_identifier_type(identifier)
       identifier.to_sym
     end
-
-    public
   end
 
   def initialize(suppressed = false)
