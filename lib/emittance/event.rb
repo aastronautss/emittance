@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Basic usage of Emittance doesn't require that you fiddle with objects of type +Emittance::Event+. However, this class
 # is open for you to inherit from in the cases where you would like to customize some aspects of the event.
@@ -35,35 +37,37 @@
 #
 # Now, when emitters emit +:bar+, this will be the event received by watchers.
 #
-class Emittance::Event
-  class << self
-    # @return [Symbol] the identifier that can be used by the {Emittance::Dispatcher dispatcher} to find event handlers
+module Emittance
+  class Event
+    class << self
+      # @return [Symbol] the identifier that can be used by the {Emittance::Broker broker} to find event handlers
+      def identifier
+        EventBuilder.klass_to_identifier self
+      end
+
+      # Gives the Event object a custom identifier.
+      #
+      # @param [Symbol] the identifier you wish to identify this event by when emitting and watching for it
+      def add_identifier(sym)
+        EventBuilder.register_custom_identifier self, sym
+      end
+
+      # @private
+      def event_klass_for(*identifiers)
+        EventBuilder.objects_to_klass *identifiers
+      end
+    end
+
+    attr_reader :emitter, :timestamp, :payload
+
+    def initialize(emitter, timestamp, payload)
+      @emitter = emitter
+      @timestamp = timestamp
+      @payload = payload
+    end
+
     def identifier
-      EventBuilder.klass_to_identifier self
+      self.class.identifier
     end
-
-    # Gives the Event object a custom identifier.
-    #
-    # @param [Symbol] the identifier you wish to identify this event by when emitting and watching for it
-    def add_identifier(sym)
-      EventBuilder.register_custom_identifier self, sym
-    end
-
-    # @private
-    def event_klass_for(*identifiers)
-      EventBuilder.objects_to_klass *identifiers
-    end
-  end
-
-  attr_reader :emitter, :timestamp, :payload
-
-  def initialize(emitter, timestamp, payload)
-    @emitter = emitter
-    @timestamp = timestamp
-    @payload = payload
-  end
-
-  def identifier
-    self.class.identifier
   end
 end

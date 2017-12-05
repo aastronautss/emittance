@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 require 'spec_helper'
 
 class Emittance::Action::MyAction
