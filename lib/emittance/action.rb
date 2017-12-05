@@ -1,119 +1,119 @@
 # frozen_string_literal: true
 
-##
-# Consider the usual "Service Object" pattern:
-#
-#   class Foo
-#     def assign
-#       FooAssignment.new(self).call
-#     end
-#   end
-#
-#   class FooAssignment
-#     attr_reader :assignable
-#
-#     def initialize(assignable)
-#       @assignable = assignable
-#     end
-#
-#     def call
-#       do_stuff
-#     end
-#
-#     # ...
-#   end
-#
-# There are variations on this pattern, the idea is that the service object represents something that your application
-# is doing. However, this can easily just become a proxy for the same antipattern it was made to solve. We might wind
-# up with a +#call+ method like the following:
-#
-#   class FooAssignment
-#     # ...
-#
-#     def call
-#       do_stuff
-#       do_stuff_to_another_object
-#       do_stuff_to_something_else
-#       do_stuff_to_yet_another_thing
-#     end
-#
-#     # ...
-#   end
-#
-# We can use the +Emittance+ core features to prune those method calls:
-#
-#   class FooAssignment
-#     extend Emittance::Emitter
-#
-#     # ...
-#
-#     def call
-#       do_stuff
-#       emit :foo_assignment
-#     end
-#
-#     # ...
-#   end
-#
-# +Emittance::Action+ provides a shortcut for this. Just mix it in and implement +#call+! This allows us to keep the
-# expressitivity that a Service Object is made to provide, while preventing us from having to give such an object too
-# many responsibilities.
-#
-# == Usage
-#
-# First, define a class and include this module:
-#
-#   class FooAssignment
-#     include Emittance::Action
-#
-#     attr_reader :assignable
-#
-#     def initialize(assignable)
-#       @assignable = assignable
-#     end
-#   end
-#
-# Next, we'll implement the +#call+ instance method. +Emittance::Action+ will take care of the dirty work for us:
-#
-#   class FooAssignment
-#     # ...
-#
-#     def call
-#       do_one_and_i_mean_only_one_thing
-#     end
-#
-#     # ...
-#   end
-#
-# From here, your code should be able to run without error! You might notice, though, that a mysterious class will have
-# been defined after loading this file.
-#
-#   defined? FooAssignmentHandler
-#   => "constant"
-#
-# Next, we can open up this class to implement the event handler. +Emittance+ will look for a method called
-# +#handle_call+, and invoke it whenever, in this example, +FooAssignment#call+ is called.
-#
-#   class FooAssignmentHandler
-#     def handle_call
-#       notify_someone(action)
-#     end
-#
-#     # ...
-#   end
-#
-# The "Action" object is stored as the instance variable +@action+, made available with a getter class +#action+. This
-# will allow us to access its data and make decisions based on it.
-#
-# Now, this seems like we're passing the buck of all that control flow to yet another object, but this pattern has
-# several advantages. First, we can disable +Emittance+ at will, so if we ever want to shut +FooAssignment+ actions
-# off from their listeners, that is always an option to us. Second, to address the concern raised at the beginning of
-# this paragraph, this paradigm puts us into the mindset of spreading the flow of our program out across multiple
-# action/handler pairs, allowing us to think more clearly about what our code is doing.
-#
-# One possible disadvantage of this pattern is that it suggests a one-to-one pairing between events and handlers.
-#
 module Emittance
+  ##
+  # Consider the usual "Service Object" pattern:
+  #
+  #   class Foo
+  #     def assign
+  #       FooAssignment.new(self).call
+  #     end
+  #   end
+  #
+  #   class FooAssignment
+  #     attr_reader :assignable
+  #
+  #     def initialize(assignable)
+  #       @assignable = assignable
+  #     end
+  #
+  #     def call
+  #       do_stuff
+  #     end
+  #
+  #     # ...
+  #   end
+  #
+  # There are variations on this pattern, the idea is that the service object represents something that your application
+  # is doing. However, this can easily just become a proxy for the same antipattern it was made to solve. We might wind
+  # up with a +#call+ method like the following:
+  #
+  #   class FooAssignment
+  #     # ...
+  #
+  #     def call
+  #       do_stuff
+  #       do_stuff_to_another_object
+  #       do_stuff_to_something_else
+  #       do_stuff_to_yet_another_thing
+  #     end
+  #
+  #     # ...
+  #   end
+  #
+  # We can use the +Emittance+ core features to prune those method calls:
+  #
+  #   class FooAssignment
+  #     extend Emittance::Emitter
+  #
+  #     # ...
+  #
+  #     def call
+  #       do_stuff
+  #       emit :foo_assignment
+  #     end
+  #
+  #     # ...
+  #   end
+  #
+  # +Emittance::Action+ provides a shortcut for this. Just mix it in and implement +#call+! This allows us to keep the
+  # expressitivity that a Service Object is made to provide, while preventing us from having to give such an object too
+  # many responsibilities.
+  #
+  # == Usage
+  #
+  # First, define a class and include this module:
+  #
+  #   class FooAssignment
+  #     include Emittance::Action
+  #
+  #     attr_reader :assignable
+  #
+  #     def initialize(assignable)
+  #       @assignable = assignable
+  #     end
+  #   end
+  #
+  # Next, we'll implement the +#call+ instance method. +Emittance::Action+ will take care of the dirty work for us:
+  #
+  #   class FooAssignment
+  #     # ...
+  #
+  #     def call
+  #       do_one_and_i_mean_only_one_thing
+  #     end
+  #
+  #     # ...
+  #   end
+  #
+  # From here, your code should be able to run without error! You might notice, though, that a mysterious class will have
+  # been defined after loading this file.
+  #
+  #   defined? FooAssignmentHandler
+  #   => "constant"
+  #
+  # Next, we can open up this class to implement the event handler. +Emittance+ will look for a method called
+  # +#handle_call+, and invoke it whenever, in this example, +FooAssignment#call+ is called.
+  #
+  #   class FooAssignmentHandler
+  #     def handle_call
+  #       notify_someone(action)
+  #     end
+  #
+  #     # ...
+  #   end
+  #
+  # The "Action" object is stored as the instance variable +@action+, made available with a getter class +#action+. This
+  # will allow us to access its data and make decisions based on it.
+  #
+  # Now, this seems like we're passing the buck of all that control flow to yet another object, but this pattern has
+  # several advantages. First, we can disable +Emittance+ at will, so if we ever want to shut +FooAssignment+ actions
+  # off from their listeners, that is always an option to us. Second, to address the concern raised at the beginning of
+  # this paragraph, this paradigm puts us into the mindset of spreading the flow of our program out across multiple
+  # action/handler pairs, allowing us to think more clearly about what our code is doing.
+  #
+  # One possible disadvantage of this pattern is that it suggests a one-to-one pairing between events and handlers.
+  #
   module Action
     # Name of the method that will emit an event when invoked.
     EMITTING_METHOD = :call

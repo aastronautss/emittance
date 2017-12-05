@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-##
-# Synchronously dispatches the event to watchers.
-#
 module Emittance
+  ##
+  # Synchronously dispatches the event to watchers.
+  #
   class Synchronous < Emittance::Broker
     class << self
       # (@see Emittance::Broker.process_event)

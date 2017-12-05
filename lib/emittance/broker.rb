@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-##
-# Base class for event brokers.
-#
 module Emittance
+  ##
+  # Base class for event brokers.
+  #
   class Broker
     class << self
       # @param event [Emittance::Event] the event to be passed off to watchers

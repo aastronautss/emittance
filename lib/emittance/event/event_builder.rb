@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# @private
 module Emittance
+  # @private
   class Event
     class EventBuilder
       KLASS_NAME_SUFFIX = 'Event'

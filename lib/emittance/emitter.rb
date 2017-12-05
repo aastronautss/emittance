@@ -1,25 +1,25 @@
 # frozen_string_literal: true
 
-##
-# An emitter is any object that has the power to emit an event. Extend this module in any class whose singleton or
-# instances you would like to have emit events.
-#
-# == Usage
-#
-# Whenever something warrants the emission of an event, you just need to call +#emit+ on that object. It is generally
-# a good practice for an object to emit its own events, but I'm not your mother so you can emit events from wherever
-# you want. It's probably not the best idea to do that, though. +#emit+ takes 2 params. First, it takes the identifier
-# for the event object type (which can also be the {Emittance::Event} class itself). See the "identifiers" section
-# of {Emittance::Event} for more info on this. The second argument is the payload. This is basically whatever you
-# want it to be, but you might want to standardize this on a per-event basis. The +Emittance+ will then (at this
-# time, synchronously) trigger each callback registered to listen for events of that identifier.
-#
-# +Emitter+ also provides a vanity class method that allows you to emit an event whenever a given method is called.
-# This event gets triggered whenever an instance of the class finishes executing a method. This event is emitted (and
-# therefore, all listening callbacks are triggered) between the point at which the method finishes executing and the
-# return value is passed to its invoker.
-#
 module Emittance
+  ##
+  # An emitter is any object that has the power to emit an event. Extend this module in any class whose singleton or
+  # instances you would like to have emit events.
+  #
+  # == Usage
+  #
+  # Whenever something warrants the emission of an event, you just need to call +#emit+ on that object. It is generally
+  # a good practice for an object to emit its own events, but I'm not your mother so you can emit events from wherever
+  # you want. It's probably not the best idea to do that, though. +#emit+ takes 2 params. First, it takes the identifier
+  # for the event object type (which can also be the {Emittance::Event} class itself). See the "identifiers" section
+  # of {Emittance::Event} for more info on this. The second argument is the payload. This is basically whatever you
+  # want it to be, but you might want to standardize this on a per-event basis. The +Emittance+ will then (at this
+  # time, synchronously) trigger each callback registered to listen for events of that identifier.
+  #
+  # +Emitter+ also provides a vanity class method that allows you to emit an event whenever a given method is called.
+  # This event gets triggered whenever an instance of the class finishes executing a method. This event is emitted (and
+  # therefore, all listening callbacks are triggered) between the point at which the method finishes executing and the
+  # return value is passed to its invoker.
+  #
   module Emitter
     # :nocov:
     class << self
