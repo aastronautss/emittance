@@ -1,6 +1,8 @@
 require 'emittance/version'
 require 'emittance/errors'
 
+require 'emittance/brokerage'
+require 'emittance/broker'
 require 'emittance/registration'
 require 'emittance/event'
 require 'emittance/event/event_builder'
