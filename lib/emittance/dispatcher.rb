@@ -2,8 +2,8 @@
 
 require 'set'
 
-# @private
 module Emittance
+  # @private
   class Dispatcher
     @registrations = {}
     @enabled = true
@@ -60,7 +60,7 @@ module Emittance
       end
 
       def normalize_identifier(identifier)
-        if event_klass?(identifier) || is_event_object?(identifier)
+        if event_klass?(identifier) || event_object?(identifier)
           identifier.identifier
         else
           coerce_identifier_type identifier
@@ -75,7 +75,7 @@ module Emittance
         identifier.is_a?(Class) && identifier < Emittance::Event
       end
 
-      def is_event_object?(identifier)
+      def event_object?(identifier)
         identifier.is_a? Emittance::Event
       end
 
