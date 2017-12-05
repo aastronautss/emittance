@@ -1,2 +1,12 @@
+# Metrics
+
 Metrics/LineLength:
   Max: 120
+
+# Layout
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented

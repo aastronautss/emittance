@@ -1,4 +1,4 @@
-# froze_string_literal: true
+# frozen_string_literal: true
 
 require 'spec_helper'
 
@@ -13,8 +13,8 @@ RSpec.describe Emittance::Emitter do
   end
 
   describe '.emits_on' do
-    it 'sends a message to the broker' do
-      expect(Emittance::Broker).to receive(:process_event).with(kind_of Emittance::Event)
+    it 'sends a message to the dispatcher' do
+      expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
       Emittance::Emitter::Foo.new.foo
     end
@@ -25,10 +25,10 @@ RSpec.describe Emittance::Emitter do
   end
 
   describe '#emit' do
-    it 'sends a message to the broker' do
+    it 'sends a message to the dispatcher' do
       payload = ['hello', 'world']
 
-      expect(Emittance::Broker).to receive(:process_event).with(kind_of Emittance::Event)
+      expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
       Emittance::Emitter::Foo.emit :foo, payload
     end
@@ -36,7 +36,7 @@ RSpec.describe Emittance::Emitter do
     it 'can be called from an instance' do
       payload = ['hello', 'world']
 
-      expect(Emittance::Broker).to receive(:process_event).with(kind_of Emittance::Event)
+      expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
       Emittance::Emitter::Foo.new.emit 'foo', payload
     end

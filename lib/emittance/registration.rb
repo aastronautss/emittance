@@ -1,7 +1,7 @@
-# froze_string_literal: true
+# frozen_string_literal: true
 
-# @private
 module Emittance
+  # @private
   class Registration
     attr_reader :identifier
 

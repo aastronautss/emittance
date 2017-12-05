@@ -1,10 +1,10 @@
-# froze_string_literal: true
+# frozen_string_literal: true
 
-# @private
 module Emittance
+  # @private
   class Event
     class EventBuilder
-      KLASS_NAME_SUFFIX = 'Event'.freeze
+      KLASS_NAME_SUFFIX = 'Event'
 
       class << self
         def klass_exists_for_identifier?(identifier)

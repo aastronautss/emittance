@@ -1,4 +1,4 @@
-# froze_string_literal: true
+# frozen_string_literal: true
 
 require 'spec_helper'
 
@@ -8,7 +8,7 @@ RSpec.describe Emittance::Watcher do
     stub_const('Bar', Class.new { include Emittance::Watcher })
   end
 
-  after { Emittance::Broker.clear_registrations! }
+  after { Emittance::Dispatcher.clear_registrations! }
 
   describe '#watch' do
     it 'watches for emissions' do
