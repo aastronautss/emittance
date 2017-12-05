@@ -7,7 +7,7 @@ module Emittance
   class Broker
     class << self
       # @param event [Emittance::Event] the event to be passed off to watchers
-      def process_event(event)
+      def process_event(_event)
         raise NotImplementedError
       end
 

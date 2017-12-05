@@ -4,7 +4,7 @@
 module Emittance
   class Event
     class EventBuilder
-      KLASS_NAME_SUFFIX = 'Event'.freeze
+      KLASS_NAME_SUFFIX = 'Event'
 
       class << self
         def klass_exists_for_identifier?(identifier)
