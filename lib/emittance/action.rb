@@ -38,8 +38,24 @@
 #     # ...
 #   end
 #
-# Mixing in +Emittance::Action+ allows us to keep the expressitivity that a Service Object is made to provide, while
-# preventing us from having to give such an object too many responsibilities.
+# We can use the +Emittance+ core features to prune those method calls:
+#
+#   class FooAssignment
+#     extend Emittance::Emitter
+#
+#     # ...
+#
+#     def call
+#       do_stuff
+#       emit :foo_assignment
+#     end
+#
+#     # ...
+#   end
+#
+# +Emittance::Action+ provides a shortcut for this. Just mix it in and implement +#call+! This allows us to keep the
+# expressitivity that a Service Object is made to provide, while preventing us from having to give such an object too
+# many responsibilities.
 #
 # == Usage
 #
@@ -96,7 +112,9 @@
 # One possible disadvantage of this pattern is that it suggests a one-to-one pairing between events and handlers.
 #
 module Emittance::Action
+  # Name of the method that will emit an event when invoked.
   EMITTING_METHOD = :call
+  # Name of the method that will be invoked when the handler class captures an event.
   HANDLER_METHOD_NAME = "handle_#{EMITTING_METHOD}".to_sym
 
   # @private

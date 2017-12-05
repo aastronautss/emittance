@@ -1,11 +1,12 @@
-[![Build Status](https://travis-ci.org/aastronautss/emittance.svg?branch=master)](https://travis-ci.org/aastronautss/emittance) [![Maintainability](https://api.codeclimate.com/v1/badges/b5900e32c5a385c96c95/maintainability)](https://codeclimate.com/github/aastronautss/emittance/maintainability)
-
 # Emittance
+
+[![Build Status](https://travis-ci.org/aastronautss/emittance.svg?branch=master)](https://travis-ci.org/aastronautss/emittance)
+[![Maintainability](https://api.codeclimate.com/v1/badges/b5900e32c5a385c96c95/maintainability)](https://codeclimate.com/github/aastronautss/emittance/maintainability)
 
 Emittance is a flexible eventing library that provides a clean interface for both emitting and capturing events. It follows the following workflow:
 
 1. Objects (and therefore, classes) can emit events, identified by a symbol.
-2. Events are objects that know who emitted them. Their
+2. Events are objects that know who emitted them, what time the event was emitted, and any additional information.
 3. Objects (and therefore, classes) can watch for events that get emitted.
 
 Per this pattern, objects are responsible for knowing what events they want to listen to. While this is pragmatically the same as a "push"-style message system (watchers don't need to go check a topic themselves), the semantics are a little different.
