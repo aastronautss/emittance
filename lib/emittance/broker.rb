@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 ##
 # Base class for event brokers.
 #

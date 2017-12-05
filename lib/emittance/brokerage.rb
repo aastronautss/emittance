@@ -1,3 +1,9 @@
+# froze_string_literal: true
+
+##
+# The clearinghouse for brokers. Registers brokers, and decides which broker to use when sent an event. First point of
+# contact for event propagation.
+#
 class Emittance::Brokerage
   class << self
     def send_event(event, broker_id)
@@ -14,6 +20,7 @@ class Emittance::Brokerage
     end
   end
 
+  # @private
   module Registry
     @brokers = {}
 
