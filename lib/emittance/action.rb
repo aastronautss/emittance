@@ -86,8 +86,8 @@ module Emittance
   #     # ...
   #   end
   #
-  # From here, your code should be able to run without error! You might notice, though, that a mysterious class will have
-  # been defined after loading this file.
+  # From here, your code should be able to run without error! You might notice, though, that a mysterious class will
+  # have been defined after loading this file.
   #
   #   defined? FooAssignmentHandler
   #   => "constant"

@@ -2,8 +2,8 @@
 
 module Emittance
   ##
-  # Basic usage of Emittance doesn't require that you fiddle with objects of type +Emittance::Event+. However, this class
-  # is open for you to inherit from in the cases where you would like to customize some aspects of the event.
+  # Basic usage of Emittance doesn't require that you fiddle with objects of type +Emittance::Event+. However, this
+  # class is open for you to inherit from in the cases where you would like to customize some aspects of the event.
   #
   # To define a custom event, just inherit from +Emittance::Event+:
   #
