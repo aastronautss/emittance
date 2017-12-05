@@ -113,78 +113,80 @@
 #
 # One possible disadvantage of this pattern is that it suggests a one-to-one pairing between events and handlers.
 #
-module Emittance::Action
-  # Name of the method that will emit an event when invoked.
-  EMITTING_METHOD = :call
-  # Name of the method that will be invoked when the handler class captures an event.
-  HANDLER_METHOD_NAME = "handle_#{EMITTING_METHOD}".to_sym
+module Emittance
+  module Action
+    # Name of the method that will emit an event when invoked.
+    EMITTING_METHOD = :call
+    # Name of the method that will be invoked when the handler class captures an event.
+    HANDLER_METHOD_NAME = "handle_#{EMITTING_METHOD}".to_sym
 
-  # @private
-  class << self
-    def included(action_klass)
-      handler_klass_name = Emittance::Action.handler_klass_name(action_klass)
-      handler_klass = Emittance::Action.find_or_create_klass(handler_klass_name)
+    # @private
+    class << self
+      def included(action_klass)
+        handler_klass_name = Emittance::Action.handler_klass_name(action_klass)
+        handler_klass = Emittance::Action.find_or_create_klass(handler_klass_name)
 
-      action_klass.class_eval do
-        extend Emittance::Emitter
+        action_klass.class_eval do
+          extend Emittance::Emitter
 
-        class << self
-          # @private
-          def method_added(method_name)
-            emitting_method = Emittance::Action::EMITTING_METHOD
-            emits_on method_name if method_name == emitting_method
-            super
+          class << self
+            # @private
+            def method_added(method_name)
+              emitting_method = Emittance::Action::EMITTING_METHOD
+              emits_on method_name if method_name == emitting_method
+              super
+            end
+          end
+        end
+
+        handler_klass.class_eval do
+          attr_reader :action
+
+          extend Emittance::Watcher
+
+          def initialize(action_obj)
+            @action = action_obj
+          end
+
+          watch Emittance::Action.emitting_event_name(action_klass) do |event|
+            handler_obj = new(event.emitter)
+            handler_method_name = Emittance::Action::HANDLER_METHOD_NAME
+
+            if handler_obj.respond_to? handler_method_name
+              handler_obj.send handler_method_name
+            end
           end
         end
       end
 
-      handler_klass.class_eval do
-        attr_reader :action
-
-        extend Emittance::Watcher
-
-        def initialize(action_obj)
-          @action = action_obj
-        end
-
-        watch Emittance::Action.emitting_event_name(action_klass) do |event|
-          handler_obj = new(event.emitter)
-          handler_method_name = Emittance::Action::HANDLER_METHOD_NAME
-
-          if handler_obj.respond_to? handler_method_name
-            handler_obj.send handler_method_name
-          end
-        end
-      end
-    end
-
-    # @private
-    def handler_klass_name(action_klass)
-      "#{action_klass}Handler"
-    end
-
-    # @private
-    def emitting_event_name(action_klass)
-      Emittance::Emitter.emitting_method_event(action_klass, Emittance::Action::EMITTING_METHOD)
-    end
-
-    # @private
-    def find_or_create_klass(klass_name)
-      unless Object.const_defined? klass_name
-        set_namespaced_constant_by_name klass_name, Class.new
+      # @private
+      def handler_klass_name(action_klass)
+        "#{action_klass}Handler"
       end
 
-      Object.const_get klass_name
-    end
+      # @private
+      def emitting_event_name(action_klass)
+        Emittance::Emitter.emitting_method_event(action_klass, Emittance::Action::EMITTING_METHOD)
+      end
 
-    private
+      # @private
+      def find_or_create_klass(klass_name)
+        unless Object.const_defined? klass_name
+          set_namespaced_constant_by_name klass_name, Class.new
+        end
 
-    def set_namespaced_constant_by_name(const_name, obj)
-      names = const_name.split("::".freeze)
-      names.shift if names.size > 1 && names.first.empty?
+        Object.const_get klass_name
+      end
 
-      namespace = names.size == 1 ? Object : Object.const_get(names[0...-1].join('::'.freeze))
-      namespace.const_set names.last, obj
+      private
+
+      def set_namespaced_constant_by_name(const_name, obj)
+        names = const_name.split("::".freeze)
+        names.shift if names.size > 1 && names.first.empty?
+
+        namespace = names.size == 1 ? Object : Object.const_get(names[0...-1].join('::'.freeze))
+        namespace.const_set names.last, obj
+      end
     end
   end
 end

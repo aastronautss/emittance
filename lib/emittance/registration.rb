@@ -1,15 +1,17 @@
 # froze_string_literal: true
 
 # @private
-class Emittance::Registration
-  attr_reader :identifier
+module Emittance
+  class Registration
+    attr_reader :identifier
 
-  def initialize(identifier, &callback)
-    @identifier = identifier
-    @callback = callback
-  end
+    def initialize(identifier, &callback)
+      @identifier = identifier
+      @callback = callback
+    end
 
-  def call(event)
-    @callback.call event
+    def call(event)
+      @callback.call event
+    end
   end
 end
