@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    emittance (0.0.1)
+    emittance (0.0.2)
 
 GEM
   remote: https://rubygems.org/
