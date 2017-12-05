@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 # @private
 class Emittance::Registration
   attr_reader :identifier

@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 ##
 # Consider the usual "Service Object" pattern:
 #

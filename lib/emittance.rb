@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 require 'emittance/version'
 require 'emittance/errors'
 

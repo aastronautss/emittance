@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 # @private
 class Emittance::Event::EventBuilder
   KLASS_NAME_SUFFIX = 'Event'.freeze

@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 ##
 # Basic usage of Emittance doesn't require that you fiddle with objects of type +Emittance::Event+. However, this class
 # is open for you to inherit from in the cases where you would like to customize some aspects of the event.

@@ -1,3 +1,5 @@
+# froze_string_literal: true
+
 ##
 # Mix in this module to wire up the ability to watch for events. For more information, see {#watch}.
 #
