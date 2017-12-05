@@ -47,7 +47,7 @@ module Emittance
 
       # Gives the Event object a custom identifier.
       #
-      # @param [Symbol] the identifier you wish to identify this event by when emitting and watching for it
+      # @param sym [Symbol] the identifier you wish to identify this event by when emitting and watching for it
       def add_identifier(sym)
         EventBuilder.register_custom_identifier self, sym
       end
