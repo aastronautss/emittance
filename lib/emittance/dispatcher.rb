@@ -24,7 +24,7 @@ module Emittance
       end
 
       def clear_registrations!
-        registrations.keys.each do |identifier|
+        registrations.each_key do |identifier|
           clear_registrations_for! identifier
         end
       end

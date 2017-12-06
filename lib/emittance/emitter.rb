@@ -44,9 +44,9 @@ module Emittance
       # @private
       def emitter_eval(klass, *args, &blk)
         if klass.respond_to? :class_eval
-          klass.class_eval *args, &blk
+          klass.class_eval(*args, &blk)
         else
-          klass.singleton_class.class_eval *args, &blk
+          klass.singleton_class.class_eval(*args, &blk)
         end
       end
     end
@@ -78,7 +78,7 @@ module Emittance
       # @param payload (@see #emit)
       def emit_with_dynamic_identifier(*identifiers, payload:, broker: :synchronous)
         now = Time.now
-        event_klass = _event_klass_for *identifiers
+        event_klass = _event_klass_for(*identifiers)
         event = event_klass.new(self, now, payload)
         _send_to_broker event, broker
 
@@ -89,7 +89,7 @@ module Emittance
 
       # @private
       def _event_klass_for(*identifiers)
-        Emittance::Event.event_klass_for *identifiers
+        Emittance::Event.event_klass_for(*identifiers)
       end
 
       # @private
@@ -104,10 +104,13 @@ module Emittance
       # The payload for this event will be the value returned from the method call.
       #
       # @param method_names [Symbol, String, Array<Symbol, String>] the methods whose calls emit an event
+      #
+      # rubocop:disable Metrics/MethodLength
       def emits_on(*method_names)
         method_names.each do |method_name|
           non_emitting_method = Emittance::Emitter.non_emitting_method_for method_name
 
+          # rubocop:disable Lint/NonLocalExitFromIterator
           Emittance::Emitter.emitter_eval(self) do
             if method_defined?(non_emitting_method)
               warn "Already emitting on #{method_name.inspect}"

@@ -1,4 +1,4 @@
-# froze_string_literal: true
+# frozen_string_literal: true
 
 module Emittance
   # Raised when an identifier (for the purposes of identifying an event class) cannot be parsed, or an event class

@@ -1,3 +1,8 @@
+AllCops:
+  Exclude:
+    - 'spec/**/*'
+    - 'bin/**/*'
+
 # Metrics
 
 Metrics/LineLength:
@@ -10,3 +15,8 @@ Layout/MultilineMethodCallIndentation:
 
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
+
+# Style
+
+Style/DoubleNegation:
+  Enabled: false
