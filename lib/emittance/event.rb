@@ -54,7 +54,7 @@ module Emittance
 
       # @private
       def event_klass_for(*identifiers)
-        EventBuilder.objects_to_klass *identifiers
+        EventBuilder.objects_to_klass(*identifiers)
       end
     end
 

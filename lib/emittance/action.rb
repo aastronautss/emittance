@@ -126,37 +126,8 @@ module Emittance
         handler_klass_name = Emittance::Action.handler_klass_name(action_klass)
         handler_klass = Emittance::Action.find_or_create_klass(handler_klass_name)
 
-        action_klass.class_eval do
-          extend Emittance::Emitter
-
-          class << self
-            # @private
-            def method_added(method_name)
-              emitting_method = Emittance::Action::EMITTING_METHOD
-              emits_on method_name if method_name == emitting_method
-              super
-            end
-          end
-        end
-
-        handler_klass.class_eval do
-          attr_reader :action
-
-          extend Emittance::Watcher
-
-          def initialize(action_obj)
-            @action = action_obj
-          end
-
-          watch Emittance::Action.emitting_event_name(action_klass) do |event|
-            handler_obj = new(event.emitter)
-            handler_method_name = Emittance::Action::HANDLER_METHOD_NAME
-
-            if handler_obj.respond_to? handler_method_name
-              handler_obj.send handler_method_name
-            end
-          end
-        end
+        setup_action_klass action_klass
+        setup_handler_klass handler_klass, action_klass
       end
 
       # @private
@@ -179,6 +150,57 @@ module Emittance
       end
 
       private
+
+      # Class setups
+
+      def setup_action_klass(action_klass)
+        action_klass.class_eval(&action_klass_blk)
+      end
+
+      def setup_handler_klass(handler_klass, action_klass)
+        handler_klass.class_eval(&handler_klass_blk(action_klass))
+      end
+
+      # Blocks
+
+      def action_klass_blk
+        lambda do |_klass|
+          extend Emittance::Emitter
+
+          class << self
+            # @private
+            # rubocop:disable Lint/NestedMethodDefinition
+            def method_added(method_name)
+              emitting_method = Emittance::Action::EMITTING_METHOD
+              emits_on method_name if method_name == emitting_method
+              super
+            end
+          end
+        end
+      end
+
+      # rubocop:disable Metrics/MethodLength
+      def handler_klass_blk(action_klass)
+        lambda do |_klass|
+          attr_reader :action
+
+          extend Emittance::Watcher
+
+          # rubocop:disable Lint/NestedMethodDefinition
+          def initialize(action_obj)
+            @action = action_obj
+          end
+
+          watch Emittance::Action.emitting_event_name(action_klass) do |event|
+            handler_obj = new(event.emitter)
+            handler_method_name = Emittance::Action::HANDLER_METHOD_NAME
+
+            if handler_obj.respond_to? handler_method_name
+              handler_obj.send handler_method_name
+            end
+          end
+        end
+      end
 
       def set_namespaced_constant_by_name(const_name, obj)
         names = const_name.split('::')
