@@ -169,6 +169,7 @@ module Emittance
 
           class << self
             # @private
+            # rubocop:disable Lint/NestedMethodDefinition
             def method_added(method_name)
               emitting_method = Emittance::Action::EMITTING_METHOD
               emits_on method_name if method_name == emitting_method
