@@ -126,8 +126,8 @@ module Emittance
         handler_klass_name = Emittance::Action.handler_klass_name(action_klass)
         handler_klass = Emittance::Action.find_or_create_klass(handler_klass_name)
 
-        setup_action_klass(action_klass)
-        setup_handler_klass(handler_klass)
+        setup_action_klass action_klass
+        setup_handler_klass handler_klass, action_klass
       end
 
       # @private
@@ -157,15 +157,14 @@ module Emittance
         action_klass.class_eval(&action_klass_blk)
       end
 
-      def setup_handler_klass(handler_klass)
-        handler_klass.class_eval(&handler_klass_blk)
+      def setup_handler_klass(handler_klass, action_klass)
+        handler_klass.class_eval(&handler_klass_blk(action_klass))
       end
 
       # Blocks
 
-      # rubocop:disable
       def action_klass_blk
-        lambda {
+        lambda do |_klass|
           extend Emittance::Emitter
 
           class << self
@@ -176,12 +175,12 @@ module Emittance
               super
             end
           end
-        }
+        end
       end
 
       # rubocop:disable Metrics/MethodLength
-      def handler_klass_blk
-        lambda {
+      def handler_klass_blk(action_klass)
+        lambda do |_klass|
           attr_reader :action
 
           extend Emittance::Watcher
@@ -199,7 +198,7 @@ module Emittance
               handler_obj.send handler_method_name
             end
           end
-        }
+        end
       end
 
       def set_namespaced_constant_by_name(const_name, obj)
