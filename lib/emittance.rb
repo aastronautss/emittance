@@ -33,9 +33,11 @@ module Emittance
       Emittance::Dispatcher.enabled?
     end
 
+    # :nocov:
     # @private
     def suppress(&blk)
       Emittance::Dispatcher.suppress(&blk)
     end
+    # :nocov:
   end
 end
