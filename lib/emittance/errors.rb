@@ -6,7 +6,7 @@ module Emittance
   class InvalidIdentifierError < StandardError; end
 
   # Raised when an identifier registration is attempted, but there exists an event registered to the given identifiered.
-  class IdentifierTakenError < StandardError; end
+  class IdentifierCollisionError < StandardError; end
 
   # Used when a custom event type undergoes payload validation.
   class InvalidPayloadError < StandardError; end

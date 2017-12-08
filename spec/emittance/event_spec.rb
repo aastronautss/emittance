@@ -14,7 +14,7 @@ RSpec.describe Emittance::Event do
     describe 'add_identifier' do
       it 'sets the new identifier' do
         subject.add_identifier :my_new_foo
-        expect(subject.identifier).to eq(:my_new_foo)
+        expect(subject.identifiers).to include(:my_new_foo)
       end
 
       it 'raises for invalid identifiers' do
@@ -23,11 +23,11 @@ RSpec.describe Emittance::Event do
 
       it 'raises when an identifier is already taken' do
         BarEvent.add_identifier :dont_take_me_please
-        expect { subject.add_identifier :dont_take_me_please }.to raise_error(Emittance::IdentifierTakenError)
+        expect { subject.add_identifier :dont_take_me_please }.to raise_error(Emittance::IdentifierCollisionError)
       end
 
       it 'raises when a class already resolves to the identifier' do
-        expect { BarEvent.add_identifier :foo }.to raise_error(Emittance::IdentifierTakenError)
+        expect { BarEvent.add_identifier :foo }.to raise_error(Emittance::IdentifierCollisionError)
       end
     end
   end

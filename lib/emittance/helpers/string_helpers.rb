@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Emittance
   module Helpers
     module StringHelpers
@@ -12,6 +14,10 @@ module Emittance
       def camel_case(str)
         str = str.sub(/^[a-z\d]*/) { $&.capitalize }
         str.gsub(%r{(?:_|(\/))([a-z\d]*)}) { "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}" }
+      end
+
+      def clean_up_punctuation(str)
+        str.gsub(/[^A-Za-z\d\_\:]/, '')
       end
     end
   end

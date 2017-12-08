@@ -9,18 +9,21 @@ module Emittance
     @enabled = true
 
     class << self
-      include Emittance::IdentifierSerializer
-
       def process_event(event)
         registrations_for(event).each do |registration|
           registration.call event
         end
       end
 
+      def registrations_for(identifier)
+        event_klass = find_event_klass identifier
+        registrations[event_klass]
+      end
+
       def register(identifier, &callback)
-        identifier = normalize_identifier identifier
-        registrations[identifier] ||= empty_registration
-        registrations_for(identifier) << Emittance::Registration.new(identifier, &callback)
+        event_klass = find_event_klass identifier
+        registrations[event_klass] ||= empty_registration
+        registrations_for(event_klass) << Emittance::Registration.new(event_klass, &callback)
       end
 
       def register_method_call(identifier, object, method_name)
@@ -28,19 +31,14 @@ module Emittance
       end
 
       def clear_registrations!
-        registrations.each_key do |identifier|
-          clear_registrations_for! identifier
+        registrations.each_key do |event_klass|
+          clear_registrations_for! event_klass
         end
       end
 
       def clear_registrations_for!(identifier)
-        identifier = normalize_identifier identifier
-        registrations[identifier].clear
-      end
-
-      def registrations_for(identifier)
-        identifier = normalize_identifier identifier
-        registrations[identifier] || empty_registration
+        event_klass = find_event_klass identifier
+        registrations[event_klass].clear
       end
 
       private
@@ -49,6 +47,10 @@ module Emittance
 
       def empty_registration
         Set.new
+      end
+
+      def find_event_klass(event)
+        Emittance::EventLookup.find_event_klass(event)
       end
 
       def lambda_for_method_call(object, method_name)
