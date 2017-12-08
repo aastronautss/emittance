@@ -168,12 +168,10 @@ module Emittance
           extend Emittance::Emitter
 
           class << self
-            # @private
-            # rubocop:disable Lint/NestedMethodDefinition
-            def method_added(method_name)
+            define_method :method_added do |method_name|
               emitting_method = Emittance::Action::EMITTING_METHOD
               emits_on method_name if method_name == emitting_method
-              super
+              super method_name
             end
           end
         end
@@ -186,8 +184,7 @@ module Emittance
 
           extend Emittance::Watcher
 
-          # rubocop:disable Lint/NestedMethodDefinition
-          def initialize(action_obj)
+          define_method :initialize do |action_obj|
             @action = action_obj
           end
 

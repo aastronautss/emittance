@@ -33,10 +33,12 @@ module Emittance
       Emittance::Dispatcher.enabled?
     end
 
+    # Not yet implemented!
     # :nocov:
     # @private
-    def suppress(&blk)
-      Emittance::Dispatcher.suppress(&blk)
+    def suppress(&_blk)
+      raise NotImplementedError, "This isn't working yet!"
+      # Emittance::Dispatcher.suppress(&blk)
     end
     # :nocov:
   end
