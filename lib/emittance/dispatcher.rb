@@ -9,6 +9,8 @@ module Emittance
     @enabled = true
 
     class << self
+      include Emittance::IdentifierSerializer
+
       def process_event(event)
         new.process_event event
       end
@@ -59,28 +61,8 @@ module Emittance
         Set.new
       end
 
-      def normalize_identifier(identifier)
-        if event_klass?(identifier) || event_object?(identifier)
-          identifier.identifier
-        else
-          coerce_identifier_type identifier
-        end
-      end
-
       def lambda_for_method_call(object, method_name)
         ->(event) { object.send method_name, event }
-      end
-
-      def event_klass?(identifier)
-        identifier.is_a?(Class) && identifier < Emittance::Event
-      end
-
-      def event_object?(identifier)
-        identifier.is_a? Emittance::Event
-      end
-
-      def coerce_identifier_type(identifier)
-        identifier.to_sym
       end
     end
 
