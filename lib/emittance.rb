@@ -4,6 +4,7 @@ require 'emittance/version'
 require 'emittance/errors'
 
 require 'emittance/helpers/string_helpers'
+require 'emittance/helpers/constant_helpers'
 require 'emittance/event_lookup'
 require 'emittance/brokerage'
 require 'emittance/broker'

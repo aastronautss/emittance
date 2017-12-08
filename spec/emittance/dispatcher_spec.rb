@@ -4,9 +4,6 @@ require 'spec_helper'
 
 RSpec.describe Emittance::Dispatcher do
   before do
-    stub_const 'Emittance::Dispatcher::FooEvent', Class.new(Emittance::Event)
-    stub_const 'Emittance::Dispatcher::BarEvent', Class.new(Emittance::Event)
-
     @previous_registrations = Emittance::Dispatcher.instance_variable_get '@registrations'
     Emittance::Dispatcher.instance_variable_set '@registrations', {}
   end
@@ -18,15 +15,15 @@ RSpec.describe Emittance::Dispatcher do
   let(:emitter) { double 'emitter' }
   let(:timestamp) { Time.now }
   let(:payload) { 'hello' }
-  let(:event) { Emittance::Dispatcher::FooEvent.new emitter, timestamp, payload }
+  let(:event) { FooEvent.new emitter, timestamp, payload }
 
   subject { Emittance::Dispatcher }
 
   describe '.register' do
     it 'stores a registration' do
-      subject.register(:emittance_dispatcher_foo) { |_| 'bar' }
+      subject.register(:foo) { |_| 'bar' }
 
-      expect(subject.instance_variable_get('@registrations')[:emittance_dispatcher_foo]).to_not be_empty
+      expect(subject.instance_variable_get('@registrations')[FooEvent]).to_not be_empty
     end
   end
 
@@ -35,7 +32,7 @@ RSpec.describe Emittance::Dispatcher do
       tester = double('tester')
       expect(tester).to receive(:bar)
 
-      subject.register(:emittance_dispatcher_foo) do
+      subject.register(:foo) do
         tester.bar
       end
 
@@ -46,8 +43,8 @@ RSpec.describe Emittance::Dispatcher do
       tester = double('tester')
       expect(tester).to receive(:bar)
 
-      subject.register(:emittance_dispatcher_foo) do |event|
-        expect(event.identifier).to eq(:emittance_dispatcher_foo)
+      subject.register(:foo) do |event|
+        expect(event.identifiers).to include(:foo)
         expect(event.timestamp).to be_a(Time)
         expect(event.payload).to eq('hello')
 
@@ -59,21 +56,21 @@ RSpec.describe Emittance::Dispatcher do
   end
 
   describe '.clear_registrations_for!' do
-    let(:action) { subject.clear_registrations_for! :emittance_dispatcher_foo }
+    let(:action) { subject.clear_registrations_for! :foo }
 
     it 'clears a registration' do
-      subject.register(:emittance_dispatcher_foo) { 'bar' }
+      subject.register(:foo) { 'bar' }
 
       action
-      expect(subject.registrations_for(:emittance_dispatcher_foo)).to be_empty
+      expect(subject.registrations_for(:foo)).to be_empty
     end
 
     it 'does not clear registrations for other identifiers' do
-      subject.register(:emittance_dispatcher_foo) { 'bar' }
-      subject.register(:emittance_dispatcher_bar) { 'baz' }
+      subject.register(:foo) { 'bar' }
+      subject.register(:bar) { 'baz' }
 
       action
-      expect(subject.registrations_for(:emittance_dispatcher_bar)).to_not be_empty
+      expect(subject.registrations_for(:bar)).to_not be_empty
     end
   end
 
@@ -81,19 +78,19 @@ RSpec.describe Emittance::Dispatcher do
     let(:action) { subject.clear_registrations! }
 
     it 'clears a registration' do
-      subject.register(:emittance_dispatcher_foo) { 'bar' }
+      subject.register(:foo) { 'bar' }
 
       action
-      expect(subject.registrations_for(:emittance_dispatcher_foo)).to be_empty
+      expect(subject.registrations_for(:foo)).to be_empty
     end
 
     it 'clears multiple registrations' do
-      subject.register(:emittance_dispatcher_foo) { 'bar' }
-      subject.register(:emittance_dispatcher_bar) { 'baz' }
+      subject.register(:foo) { 'bar' }
+      subject.register(:bar) { 'baz' }
 
       action
-      expect(subject.registrations_for(:emittance_dispatcher_foo)).to be_empty
-      expect(subject.registrations_for(:emittance_dispatcher_bar)).to be_empty
+      expect(subject.registrations_for(:foo)).to be_empty
+      expect(subject.registrations_for(:bar)).to be_empty
     end
   end
 end

@@ -11,6 +11,38 @@ module Emittance
     class << self
       include Emittance::Helpers::StringHelpers
 
+      # Look up an {Emittance::Event} class by an identifier. Generates an Event class if no such class exists for
+      # that identifier.
+      #
+      #   EventLookup.find_event_klass :foo
+      #   # => FooEvent
+      #
+      # When passed subclass of {Emittance::Event}, it returns that event class.
+      #
+      #   class BarEvent < Emittance::Event
+      #   end
+      #
+      #   EventLookup.find_event_klass BarEvent
+      #   # => BarEvent
+      #
+      # Instances of an {Emittance::Event} will fetch the class of that instance.
+      #
+      #   EventLookup.find_event_klass BarEvent.new(nil, nil, nil)
+      #   # => BarEvent
+      #
+      # Can be passed multiple arguments as a composite identifier. Useful for identifying events by Class#method.
+      #
+      #   # Not entirely necessary, but for illustrative purposes.
+      #   class Baz
+      #     def greet
+      #     end
+      #   end
+      #
+      #   EventLookup.find_event_klass Baz, :greet
+      #   # => BazGreetEvent
+      #
+      # @param objs [*] anything that can be used to identify an Event class
+      # @return [Emittance::Event] the event class identifiable by the params
       def find_event_klass(*objs)
         klass = nil
 
@@ -21,10 +53,17 @@ module Emittance
         klass
       end
 
+      # @param klass [Class] a subclass of {Emittance::Event} you wish to find the identifiers for
+      # @return [Set<Symbol>] a collection of identifiers that can be used to identify that event class
       def identifiers_for_klass(klass)
         Emittance::EventLookup::Registry.identifiers_for_klass(klass)
       end
 
+      # Registers an identifier for an Event class. After registering, that identifier can be used to identify those
+      # events.
+      #
+      # @param klass [Class] the class you wish to register the identifier for
+      # @param identifier [Symbol] identifier you want to identify the class as
       def register_identifier(klass, identifier)
         Emittance::EventLookup::Registry.register_identifier klass: klass, identifier: identifier
       end
@@ -37,10 +76,6 @@ module Emittance
 
       def klass_of_event(*objs)
         objs.length == 1 && event_object?(objs[0]) ? objs[0].class : nil
-      end
-
-      def find_by_identifier(*objs)
-        objs.length == 1 && identifier?(objs[0]) ? lookup_identifier(objs[0]) : nil
       end
 
       def find_by_identifier(*objs)
@@ -65,14 +100,19 @@ module Emittance
       end
     end
 
-    private
-
+    ##
+    # Shared behavior for things that want to convert back and forth between event classes and identifiers
+    #
     class EventKlassConverter
       include Emittance::Helpers::StringHelpers
 
+      # The thing we want to append to every event class name
       KLASS_NAME_SUFFIX = 'Event'
     end
 
+    ##
+    # Converts a collection of objects to a ready-to-go identifier.
+    #
     class CompositeIdentifier < EventKlassConverter
       def initialize(*objs)
         @objs = objs
@@ -100,6 +140,9 @@ module Emittance
       end
     end
 
+    ##
+    # Derives an event class name from an identifier.
+    #
     class EventKlassName < EventKlassConverter
       def initialize(identifier)
         @identifier = identifier
@@ -119,6 +162,9 @@ module Emittance
       end
     end
 
+    ##
+    # Derives an identifier from the name of an event class.
+    #
     class EventIdentifier < EventKlassConverter
       def initialize(klass)
         @klass = klass
@@ -150,7 +196,7 @@ module Emittance
       @klass_to_identifier_mappings = {}
 
       class << self
-        include Emittance::Helpers::StringHelpers
+        include Emittance::Helpers::ConstantHelpers
 
         def fetch_event_klass(identifier)
           klass = nil
@@ -230,7 +276,7 @@ module Emittance
 
         def create_event_klass(klass_name)
           new_klass = Class.new(Emittance::Event)
-          Object.const_set klass_name, new_klass
+          set_namespaced_constant_by_name klass_name, new_klass
         end
 
         def empty_collection

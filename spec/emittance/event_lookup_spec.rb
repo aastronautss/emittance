@@ -8,7 +8,6 @@ RSpec.describe Emittance::EventLookup do
     stub_const 'Bar', Class.new
     stub_const 'Foo::Baz', Class.new
     stub_const 'FooBar', Class.new
-    stub_const 'FooEvent', Class.new(Emittance::Event)
     stub_const 'FooBarEvent', Class.new(Emittance::Event)
     stub_const 'FooBazEvent', Class.new(Emittance::Event)
   end
@@ -75,7 +74,7 @@ RSpec.describe Emittance::EventLookup do
 
       it 'can handle namespaced objects' do
         value = Emittance::EventLookup.find_event_klass(Foo::Baz)
-        expect(value).to eq(FooBazEvent)
+        expect(value).to eq(Foo::BazEvent)
         expect(value < Emittance::Event).to be(true)
       end
     end

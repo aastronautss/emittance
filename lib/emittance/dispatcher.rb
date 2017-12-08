@@ -17,6 +17,7 @@ module Emittance
 
       def registrations_for(identifier)
         event_klass = find_event_klass identifier
+        registrations[event_klass] ||= empty_registration
         registrations[event_klass]
       end
 
