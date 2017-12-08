@@ -7,6 +7,8 @@ module Emittance
       KLASS_NAME_SUFFIX = 'Event'
 
       class << self
+        include Emittance::Helpers::StringHelpers
+
         def klass_exists_for_identifier?(identifier)
           klass_name = generate_event_klass_name identifier
           !!lookup_event_klass(klass_name)
@@ -73,19 +75,6 @@ module Emittance
           name_str = clean_up_punctuation name_str
 
           name_str
-        end
-
-        def camel_case(str)
-          str = str.sub(/^[a-z\d]*/) { $&.capitalize }
-          str.gsub(%r{(?:_|(\/))([a-z\d]*)}) { "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}" }
-        end
-
-        def snake_case(str)
-          str.gsub(/::/, '_')
-            .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-            .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-            .tr('-', '_')
-            .downcase
         end
 
         def clean_up_punctuation(str)

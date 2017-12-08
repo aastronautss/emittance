@@ -12,7 +12,9 @@ module Emittance
       include Emittance::IdentifierSerializer
 
       def process_event(event)
-        new.process_event event
+        registrations_for(event).each do |registration|
+          registration.call event
+        end
       end
 
       def register(identifier, &callback)
@@ -41,21 +43,9 @@ module Emittance
         registrations[identifier] || empty_registration
       end
 
-      def enable!
-        @enabled = true
-      end
-
-      def disable!
-        @enabled = false
-      end
-
-      def enabled?
-        @enabled
-      end
-
       private
 
-      attr_accessor :enabled, :registrations
+      attr_accessor :registrations
 
       def empty_registration
         Set.new
@@ -64,34 +54,6 @@ module Emittance
       def lambda_for_method_call(object, method_name)
         ->(event) { object.send method_name, event }
       end
-    end
-
-    def initialize(suppressed = false)
-      @suppressed = suppressed
-    end
-
-    def process_event(event)
-      return unless enabled?
-
-      registrations_for(event).each do |registration|
-        registration.call event
-      end
-    end
-
-    private
-
-    attr_reader :suppressed
-
-    def registrations_for(event)
-      self.class.registrations_for event
-    end
-
-    def enabled?
-      self.class.enabled? && !suppressed?
-    end
-
-    def suppressed?
-      suppressed
     end
   end
 end
