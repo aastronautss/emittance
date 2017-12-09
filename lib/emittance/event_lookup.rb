@@ -181,9 +181,8 @@ module Emittance
       attr_reader :klass
 
       def validate_klass
-        unless klass < Emittance::Event
-          raise IdentifierGenerationError, "#{klass.name} is not a subclass of Emittance::Event!"
-        end
+        subklass_error_msg = "#{klass.name} is not a subclass of Emittance::Event!"
+        raise Emittance::IdentifierGenerationError, subklass_error_msg unless klass < Emittance::Event
       end
 
       def undecorate_klass_name(klass_name)
