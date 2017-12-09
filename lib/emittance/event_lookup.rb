@@ -197,14 +197,13 @@ module Emittance
     # {Emittance::Event} that would make subclasses register themselves, but would cause some unwanted entanglement.
     #
     module Registry
-      KLASS_NAME_SUFFIX = 'Event'
-
       @identifier_to_klass_mappings = {}
       @klass_to_identifier_mappings = {}
 
       class << self
         include Emittance::Helpers::ConstantHelpers
 
+        # Finds or generates the event class associated with the identifier.
         def fetch_event_klass(identifier)
           klass = nil
 
@@ -214,11 +213,13 @@ module Emittance
           klass
         end
 
+        # Retrieves all identifiers associated with the event class.
         def identifiers_for_klass(event_klass)
           lookup_klass_to_identifier_mapping(event_klass) ||
-            create_klass_to_identifier_mapping(event_klass)
+            create_mapping_for_klass(event_klass)
         end
 
+        # Registers the given identifier for the given event class.
         def register_identifier(identifier:, klass:)
           raise Emittance::InvalidIdentifierError unless valid_identifier? identifier
           raise Emittance::IdentifierCollisionError if identifier_reserved? identifier, klass
@@ -251,7 +252,7 @@ module Emittance
           klass_to_identifier_mappings[event_klass]
         end
 
-        def create_klass_to_identifier_mapping(event_klass)
+        def create_mapping_for_klass(event_klass)
           new_identifier = derive_identifier_from_klass(event_klass)
           register_identifier(identifier: new_identifier, klass: event_klass)
 
