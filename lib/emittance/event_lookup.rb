@@ -168,6 +168,7 @@ module Emittance
     class EventIdentifier < EventKlassConverter
       def initialize(klass)
         @klass = klass
+        validate_klass
       end
 
       def generate
@@ -178,6 +179,12 @@ module Emittance
       private
 
       attr_reader :klass
+
+      def validate_klass
+        unless klass < Emittance::Event
+          raise IdentifierGenerationError, "#{klass.name} is not a subclass of Emittance::Event!"
+        end
+      end
 
       def undecorate_klass_name(klass_name)
         klass_name.gsub(/#{KLASS_NAME_SUFFIX}$/, '')
@@ -214,7 +221,7 @@ module Emittance
 
         def register_identifier(identifier:, klass:)
           raise Emittance::InvalidIdentifierError unless valid_identifier? identifier
-          raise Emittance::IdentifierCollisionError if identifier_to_klass_mapping_exists? identifier
+          raise Emittance::IdentifierCollisionError if identifier_reserved? identifier, klass
 
           identifier_to_klass_mappings[identifier] = klass
 
@@ -231,8 +238,13 @@ module Emittance
 
         attr_reader :identifier_to_klass_mappings, :klass_to_identifier_mappings
 
-        def identifier_to_klass_mapping_exists?(identifier)
-          !!identifier_to_klass_mappings[identifier]
+        def identifier_reserved?(identifier, klass)
+          klass_already_exists_for_identifier?(identifier, klass) || !!identifier_to_klass_mappings[identifier]
+        end
+
+        def klass_already_exists_for_identifier?(identifier, klass)
+          derived_klass_name = klass_name_for identifier
+          Object.const_defined?(derived_klass_name) && klass.name != derived_klass_name
         end
 
         def lookup_klass_to_identifier_mapping(event_klass)

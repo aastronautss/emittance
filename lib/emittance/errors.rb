@@ -5,6 +5,9 @@ module Emittance
   # can otherwise not be found or generated.
   class InvalidIdentifierError < StandardError; end
 
+  # Raised when an identifier couldn't be generated from a class. Typically a validation error.
+  class IdentifierGenerationError < StandardError; end
+
   # Raised when an identifier registration is attempted, but there exists an event registered to the given identifiered.
   class IdentifierCollisionError < StandardError; end
 

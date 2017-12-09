@@ -2,16 +2,15 @@
 
 require 'spec_helper'
 
-RSpec.describe Emittance::EventLookup do
-  before do
-    stub_const 'Foo', Class.new
-    stub_const 'Bar', Class.new
-    stub_const 'Foo::Baz', Class.new
-    stub_const 'FooBar', Class.new
-    stub_const 'FooBarEvent', Class.new(Emittance::Event)
-    stub_const 'FooBazEvent', Class.new(Emittance::Event)
-  end
+class Foo; end
+class Bar; end
+class Foo::Baz; end
+class FooBar; end
+class FooEvent < Emittance::Event; end
+class FooBarEvent < Emittance::Event; end
+class FooBazEvent < Emittance::Event; end
 
+RSpec.describe Emittance::EventLookup do
   after do
     Emittance::EventLookup::Registry.clear_registrations!
   end
