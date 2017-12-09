@@ -91,10 +91,6 @@ module Emittance
         obj.is_a? Emittance::Event
       end
 
-      def identifier?(obj)
-        obj.is_a? Symbol
-      end
-
       def lookup_identifier(identifier)
         Emittance::EventLookup::Registry.fetch_event_klass(identifier)
       end
