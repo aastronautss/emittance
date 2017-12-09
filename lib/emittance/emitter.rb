@@ -52,7 +52,9 @@ module Emittance
     end
     # :nocov:
 
+    ##
     # Included and extended whenever {Emittance::Emitter} is extended.
+    #
     module ClassAndInstanceMethods
       # Emits an {Emittance::Event event object} to watchers.
       #
@@ -85,21 +87,9 @@ module Emittance
         payload
       end
 
-      private
-
-      # @private
-      def _event_klass_for(*identifiers)
-        Emittance::Event.event_klass_for(*identifiers)
-      end
-
-      # @private
-      def _send_to_broker(event, broker)
-        Emittance::Brokerage.send_event event, broker
-      end
-
-      # Tells the class to emit an event when a any of the given set of methods. By default, the event classes are named
-      # accordingly: If a +Foo+ object +emits_on+ +:bar+, then the event's class will be named +FooBarEvent+, and will
-      # be a subclass of +Emittance::Event+.
+      # Tells the object to emit an event when a any of the given set of methods. By default, the event classes are
+      # named accordingly: If a +Foo+ object +emits_on+ +:bar+, then the event's class will be named +FooBarEvent+, and
+      # will be a subclass of +Emittance::Event+.
       #
       # The payload for this event will be the value returned from the method call.
       #
@@ -128,6 +118,16 @@ module Emittance
             RUBY
           end
         end
+      end
+
+      private
+
+      def _event_klass_for(*identifiers)
+        Emittance::Event.event_klass_for(*identifiers)
+      end
+
+      def _send_to_broker(event, broker)
+        Emittance::Brokerage.send_event event, broker
       end
     end
   end

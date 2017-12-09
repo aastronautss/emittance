@@ -6,12 +6,17 @@ module Emittance
   # contact for event propagation.
   #
   class Brokerage
+    @enabled = true
+
     class << self
+      # @param event [Emittance::Event] the event object
+      # @param broker_id [Symbol] a symbol that can be used to identify a broker by
       def send_event(event, broker_id)
         broker = registry.fetch(broker_id)
         broker.process_event event
       end
 
+      # @param broker [Emittance::Broker] the broker you would like to register
       def register_broker(broker)
         registry.register broker
       end
@@ -19,6 +24,22 @@ module Emittance
       def registry
         Emittance::Brokerage::Registry
       end
+
+      def enable!
+        @enabled = true
+      end
+
+      def disable!
+        @enabled = false
+      end
+
+      def enabled?
+        @enabled
+      end
+
+      private
+
+      attr_accessor :enabled
     end
 
     # @private
@@ -26,6 +47,8 @@ module Emittance
       @brokers = {}
 
       class << self
+        include Emittance::Helpers::StringHelpers
+
         attr_reader :brokers
 
         def register(broker)
@@ -42,13 +65,6 @@ module Emittance
         def generate_broker_sym(broker)
           camel_case = broker.name.split('::').last
           snake_case(camel_case).to_sym
-        end
-
-        def snake_case(str)
-          str.gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-            .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-            .tr('-', '_')
-            .downcase
         end
       end
     end

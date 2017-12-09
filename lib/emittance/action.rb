@@ -122,6 +122,8 @@ module Emittance
 
     # @private
     class << self
+      include Emittance::Helpers::ConstantHelpers
+
       def included(action_klass)
         handler_klass_name = Emittance::Action.handler_klass_name(action_klass)
         handler_klass = Emittance::Action.find_or_create_klass(handler_klass_name)
@@ -200,14 +202,6 @@ module Emittance
             end
           end
         end
-      end
-
-      def set_namespaced_constant_by_name(const_name, obj)
-        names = const_name.split('::')
-        names.shift if names.size > 1 && names.first.empty?
-
-        namespace = names.size == 1 ? Object : Object.const_get(names[0...-1].join('::'))
-        namespace.const_set names.last, obj
       end
     end
   end

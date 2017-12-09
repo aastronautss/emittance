@@ -3,11 +3,13 @@
 require 'emittance/version'
 require 'emittance/errors'
 
+require 'emittance/helpers/string_helpers'
+require 'emittance/helpers/constant_helpers'
+require 'emittance/event_lookup'
 require 'emittance/brokerage'
 require 'emittance/broker'
 require 'emittance/registration'
 require 'emittance/event'
-require 'emittance/event/event_builder'
 require 'emittance/emitter'
 require 'emittance/watcher'
 require 'emittance/action'
@@ -20,23 +22,23 @@ module Emittance
   class << self
     # Enable eventing process-wide.
     def enable!
-      Emittance::Dispatcher.enable!
+      Emittance::Brokerage.enable!
     end
 
     # Disable eventing process-wide.
     def disable!
-      Emittance::Dispatcher.disable!
+      Emittance::Brokerage.disable!
     end
 
     # @return [Boolean] true if eventing is enabled, false otherwise.
     def enabled?
-      Emittance::Dispatcher.enabled?
+      Emittance::Brokerage.enabled?
     end
 
     # :nocov:
     # @private
     def suppress(&blk)
-      Emittance::Dispatcher.suppress(&blk)
+      Emittance::Brokerage.suppress(&blk)
     end
     # :nocov:
   end

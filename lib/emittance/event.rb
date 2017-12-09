@@ -30,7 +30,7 @@ module Emittance
   #
   # By default, the identifier for this event will be the snake_case form of the class name with +Event+ chopped off:
   #
-  #   FooEvent.identifier # => :foo
+  #   FooEvent.identifiers # => [:foo]
   #
   # You can set a custom identifier for the event class like so:
   #
@@ -40,34 +40,40 @@ module Emittance
   #
   class Event
     class << self
-      # @return [Symbol] the identifier that can be used by the {Emittance::Broker broker} to find event handlers
-      def identifier
-        EventBuilder.klass_to_identifier self
+      # @return [Array<Symbol>] the identifier that can be used by the {Emittance::Broker broker} to find event handlers
+      def identifiers
+        EventLookup.identifiers_for_klass(self).to_a
       end
 
       # Gives the Event object a custom identifier.
       #
       # @param sym [Symbol] the identifier you wish to identify this event by when emitting and watching for it
       def add_identifier(sym)
-        EventBuilder.register_custom_identifier self, sym
+        raise Emittance::InvalidIdentifierError, 'Identifiers must respond to #to_sym' unless sym.respond_to?(:to_sym)
+        EventLookup.register_identifier self, sym.to_sym
       end
 
-      # @private
+      # @param identifiers [*] anything that can be derived into an identifier (or the event class itself) for the
+      #   purposes of looking up an event class.
       def event_klass_for(*identifiers)
-        EventBuilder.objects_to_klass(*identifiers)
+        EventLookup.find_event_klass(*identifiers)
       end
     end
 
     attr_reader :emitter, :timestamp, :payload
 
+    # @param emitter the object that emitted the event
+    # @param timestamp [Time] the time at which the event occurred
+    # @param payload any useful data that might be of use to event watchers
     def initialize(emitter, timestamp, payload)
       @emitter = emitter
       @timestamp = timestamp
       @payload = payload
     end
 
-    def identifier
-      self.class.identifier
+    # @return [Array<Symbol>] all identifiers that can be used to identify the event
+    def identifiers
+      self.class.identifiers
     end
   end
 end
