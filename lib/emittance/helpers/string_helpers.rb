@@ -24,7 +24,7 @@ module Emittance
 
       # Strip all characters that can't go into a constant name.
       def clean_up_punctuation(str)
-        str.gsub(/[^A-Za-z\d\_\:\/]/, '')
+        str.gsub(%r{[^A-Za-z\d\_\:\/]}, '')
       end
     end
   end
