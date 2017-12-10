@@ -3,10 +3,10 @@
 module Emittance
   # @private
   class Registration
-    attr_reader :identifier
+    attr_reader :event_klass
 
-    def initialize(identifier, &callback)
-      @identifier = identifier
+    def initialize(event_klass, &callback)
+      @event_klass = event_klass
       @callback = callback
     end
 
