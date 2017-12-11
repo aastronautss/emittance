@@ -26,6 +26,36 @@ module Emittance
   #     end
   #   end
   #
+  # == Identifiers
+  #
+  # Events are identified by what we call "Identifiers." These come in the form of symbols, and can be used to identify
+  # specific event types.
+  #
+  # === Identifier Naming
+  #
+  # The naming convention for events and their identifiers goes like this: the name of an event class will be the
+  # CamelCase form of its identifier, plus the word +Event+. For example, +FooEvent+ can be identified with +:foo+.
+  # Thus, the events received by watchers of +:foo+ will be instances of `FooEvent`. Conversely, if you make an event
+  # class +BarEvent+ that inherits from +Emittance::Event+, its built-in identifier will be +:bar+. You can see what
+  # a +Emittance::Event+ subclass's identifier is by calling +.identifiers+ on it.
+  #
+  #   class SomethingHappenedEvent < Emittance::Event
+  #   end
+  #
+  #   MyEvent.identifiers
+  #   # => [:something_happened]
+  #
+  #   MyEvent.new.identifiers
+  #   # => [:something_happened]
+  #
+  # The namespace resultion operator (+::+) in an event's class name will translate to a +/+ in the identifier name:
+  #
+  #   class Foo::BarEvent < Emittance::Event
+  #   end
+  #
+  #   Foo::BarEvent.identifiers
+  #   #=> [:'foo/bar']
+  #
   # == Custom Identifiers
   #
   # By default, the identifier for this event will be the snake_case form of the class name with +Event+ chopped off:
@@ -36,7 +66,21 @@ module Emittance
   #
   #   FooEvent.add_identifier :bar
   #
-  # Now, when emitters emit +:bar+, this will be the event received by watchers.
+  # Now, when emitters emit +:bar+, this will be the event received by watchers. +#add_identifier+ will raise an
+  # {Emittance::IdentifierCollisionError} if you attempt to add an identifier that has already been claimed. This
+  # error will also be raised if you try to add an identifier that already has an associated class. For example:
+  #
+  #   class FooEvent < Emittance::Event
+  #   end
+  #
+  #   class BarEvent < Emittance::Event
+  #   end
+  #
+  #   BarEvent.add_identifier :foo
+  #   # => Emittance::IdentifierCollisionError
+  #
+  # This error is raised because, even though we haven't explicitly add the identifier +:foo+ for +FooEvent+, Emittance
+  # is smart enough to know that there exists a class whose name resolves to +:foo+.
   #
   class Event
     class << self

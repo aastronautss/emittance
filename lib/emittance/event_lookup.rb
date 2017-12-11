@@ -114,6 +114,7 @@ module Emittance
         @objs = objs
       end
 
+      # Compiles the objects and generates an event class name for them.
       def generate
         parts = objs.map { |obj| identifier_name_for obj }
         compose_identifier_parts parts
@@ -144,6 +145,7 @@ module Emittance
         @identifier = identifier
       end
 
+      # Generates an event class name for the given identifier.
       def generate
         base_name = camel_case identifier.to_s
         decorate_klass_name base_name
@@ -167,6 +169,7 @@ module Emittance
         validate_klass
       end
 
+      # Generates an identifier name for the given event class.
       def generate
         camel_cased_name = undecorate_klass_name(klass.name)
         snake_case(camel_cased_name).to_sym
@@ -211,7 +214,7 @@ module Emittance
         # Retrieves all identifiers associated with the event class.
         def identifiers_for_klass(event_klass)
           lookup_klass_to_identifier_mapping(event_klass) ||
-            create_mapping_for_klass(event_klass)
+            (create_mapping_for_klass(event_klass) && lookup_klass_to_identifier_mapping(event_klass))
         end
 
         # Registers the given identifier for the given event class.
@@ -225,6 +228,7 @@ module Emittance
           klass_to_identifier_mappings[klass] << identifier
         end
 
+        # Clears all registrations.
         def clear_registrations!
           identifier_to_klass_mappings.clear
           klass_to_identifier_mappings.clear
