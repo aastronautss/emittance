@@ -165,6 +165,7 @@ module Emittance
 
       # Blocks
 
+      # rubocop:disable Metrics/MethodLength
       def action_klass_blk
         lambda do |_klass|
           extend Emittance::Emitter
@@ -180,7 +181,6 @@ module Emittance
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
       def handler_klass_blk(action_klass)
         lambda do |_klass|
           attr_reader :action
