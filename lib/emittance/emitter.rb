@@ -37,11 +37,6 @@ module Emittance
       end
 
       # @private
-      def emitting_method_event(emitter_klass, method_name)
-        Emittance::Event.event_klass_for(emitter_klass, method_name)
-      end
-
-      # @private
       def emitter_eval(klass, *args, &blk)
         if klass.respond_to? :class_eval
           klass.class_eval(*args, &blk)
@@ -116,7 +111,11 @@ module Emittance
             module_eval <<-RUBY, __FILE__, __LINE__ + 1
               def #{method_name}(*args, &blk)
                 return_value = #{non_emitting_method}(*args, &blk)
-                emit_with_dynamic_identifier self.class, __method__, payload: return_value
+                if #{!identifier.nil? ? true : false}
+                  emit #{!identifier.nil? ? identifier : false}, payload: return_value
+                else
+                  emit_with_dynamic_identifier self.class, __method__, payload: return_value
+                end
                 return_value
               end
             RUBY

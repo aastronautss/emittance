@@ -7,11 +7,11 @@ RSpec.describe Emittance::Emitter do
     it 'sends a message to the dispatcher' do
       expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      Emittance::SpecFixtures::FooEmitter.new.emit_foo
+      Emittance::SpecFixtures::FooEmitter.new.do_something
     end
 
     it 'doesn\t disrupt normal operation' do
-      expect(Emittance::SpecFixtures::FooEmitter.new.emit_foo).to eq('return value')
+      expect(Emittance::SpecFixtures::FooEmitter.new.do_something).to eq('return value')
     end
   end
 

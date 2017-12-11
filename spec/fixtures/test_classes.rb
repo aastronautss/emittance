@@ -14,7 +14,7 @@ module Emittance
       end
 
       def do_something
-
+        'return value'
       end
       emits_on :do_something
     end
