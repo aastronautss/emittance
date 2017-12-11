@@ -18,7 +18,7 @@ RSpec.describe Emittance::Watcher do
       my_bar = Bar.new
       my_bar.watch(:test_foo) { |_| tester.test_me }
 
-      Foo.emit :test_foo, 'bar'
+      Foo.emit :test_foo, payload: 'bar'
     end
 
     it 'passes the payload along' do
@@ -28,7 +28,7 @@ RSpec.describe Emittance::Watcher do
       my_bar = Bar.new
       my_bar.watch(:test_foo) { |event| tester.test_me(event) }
 
-      Foo.emit :test_foo, 'bar'
+      Foo.emit :test_foo, payload: 'bar'
     end
 
     it 'can take a method name as a param instead of a block' do
@@ -37,7 +37,7 @@ RSpec.describe Emittance::Watcher do
 
       expect(my_bar).to receive(:foo_emitted)
 
-      Foo.emit :test_foo, 'bar'
+      Foo.emit :test_foo, payload: 'bar'
     end
   end
 end

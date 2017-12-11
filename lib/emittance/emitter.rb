@@ -61,10 +61,13 @@ module Emittance
       # @param identifier [Symbol, Emittance::Event] either an explicit Event object or the identifier that can be
       #   parsed into an Event object.
       # @param payload [*] any additional information that might be helpful for an event's handler to have. Can be
-      #   standardized on a per-event basis by pre-defining the class associated with the
+      #   standardized on a per-event basis by pre-defining the class associated with the identifier and validating
+      #   the payload. See {Emittance::Event} for more details.
+      # @param broker [Symbol] the identifier for the broker you wish to handle the event. Requires additional gems
+      #   if not using the default.
       #
       # @return the payload
-      def emit(identifier, payload = nil, broker: :synchronous)
+      def emit(identifier, payload: nil, broker: :synchronous)
         now = Time.now
         event_klass = _event_klass_for identifier
         event = event_klass.new(self, now, payload)
@@ -78,6 +81,7 @@ module Emittance
       #
       # @param identifiers [*] anything that can be used to generate an +Event+ class.
       # @param payload (@see #emit)
+      # @param broker (@see #emit)
       def emit_with_dynamic_identifier(*identifiers, payload:, broker: :synchronous)
         now = Time.now
         event_klass = _event_klass_for(*identifiers)
@@ -96,7 +100,7 @@ module Emittance
       # @param method_names [Symbol, String, Array<Symbol, String>] the methods whose calls emit an event
       #
       # rubocop:disable Metrics/MethodLength
-      def emits_on(*method_names)
+      def emits_on(*method_names, identifier: nil)
         method_names.each do |method_name|
           non_emitting_method = Emittance::Emitter.non_emitting_method_for method_name
 

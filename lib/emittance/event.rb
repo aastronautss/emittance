@@ -56,15 +56,18 @@ module Emittance
   #   Foo::BarEvent.identifiers
   #   #=> [:'foo/bar']
   #
-  # == Custom Identifiers
+  # === Custom Identifiers
   #
   # By default, the identifier for this event will be the snake_case form of the class name with +Event+ chopped off:
   #
-  #   FooEvent.identifiers # => [:foo]
+  #   FooEvent.identifiers
+  #   # => [:foo]
   #
   # You can set a custom identifier for the event class like so:
   #
   #   FooEvent.add_identifier :bar
+  #   FooEvent.identifiers
+  #   # => [:foo, :bar]
   #
   # Now, when emitters emit +:bar+, this will be the event received by watchers. +#add_identifier+ will raise an
   # {Emittance::IdentifierCollisionError} if you attempt to add an identifier that has already been claimed. This
@@ -81,6 +84,24 @@ module Emittance
   #
   # This error is raised because, even though we haven't explicitly add the identifier +:foo+ for +FooEvent+, Emittance
   # is smart enough to know that there exists a class whose name resolves to +:foo+.
+  #
+  # It's best to use custom identifiers very sparingly. One reason for this can be illustrated like so:
+  #
+  #   class FooEvent < Emittance::Event
+  #   end
+  #
+  #   FooEvent.add_identifier :bar
+  #   FooEvent.identifiers
+  #   # => [:foo, :bar]
+  #
+  #   class BarEvent < Emittance::Event
+  #   end
+  #
+  #   BarEvent.identifiers
+  #   # => []
+  #
+  # Since +BarEvent+'s default identifier was already reserved when it was created, it could not claim that identifier.
+  # We can manually add an identifier post-hoc, but this would nevertheless become confusing.
   #
   class Event
     class << self

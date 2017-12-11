@@ -21,7 +21,7 @@ RSpec.describe Emittance::Emitter do
 
       expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      Emittance::SpecFixtures::FooEmitter.emit :foo, payload
+      Emittance::SpecFixtures::FooEmitter.emit :foo, payload: payload
     end
 
     it 'can be called from an instance' do
@@ -29,7 +29,7 @@ RSpec.describe Emittance::Emitter do
 
       expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      Emittance::SpecFixtures::FooEmitter.new.emit 'foo', payload
+      Emittance::SpecFixtures::FooEmitter.new.emit 'foo', payload: payload
     end
   end
 end

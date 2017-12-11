@@ -110,12 +110,12 @@ RSpec.describe Emittance::EventLookup do
   describe '.identifiers_for_klass' do
     it 'converts a one-word class to a symbol' do
       value = Emittance::EventLookup.identifiers_for_klass(FooEvent)
-      expect(value).to eq(:foo)
+      expect(value).to include(:foo)
     end
 
     it 'converts a multi-word class to a symbol' do
       value = Emittance::EventLookup.identifiers_for_klass(FooBarEvent)
-      expect(value).to eq(:foo_bar)
+      expect(value).to include(:foo_bar)
     end
   end
 end
