@@ -37,11 +37,6 @@ module Emittance
       end
 
       # @private
-      def emitting_method_event(emitter_klass, method_name)
-        Emittance::Event.event_klass_for(emitter_klass, method_name)
-      end
-
-      # @private
       def emitter_eval(klass, *args, &blk)
         if klass.respond_to? :class_eval
           klass.class_eval(*args, &blk)
@@ -61,10 +56,13 @@ module Emittance
       # @param identifier [Symbol, Emittance::Event] either an explicit Event object or the identifier that can be
       #   parsed into an Event object.
       # @param payload [*] any additional information that might be helpful for an event's handler to have. Can be
-      #   standardized on a per-event basis by pre-defining the class associated with the
+      #   standardized on a per-event basis by pre-defining the class associated with the identifier and validating
+      #   the payload. See {Emittance::Event} for more details.
+      # @param broker [Symbol] the identifier for the broker you wish to handle the event. Requires additional gems
+      #   if not using the default.
       #
       # @return the payload
-      def emit(identifier, payload = nil, broker: :synchronous)
+      def emit(identifier, payload: nil, broker: :synchronous)
         now = Time.now
         event_klass = _event_klass_for identifier
         event = event_klass.new(self, now, payload)
@@ -78,6 +76,7 @@ module Emittance
       #
       # @param identifiers [*] anything that can be used to generate an +Event+ class.
       # @param payload (@see #emit)
+      # @param broker (@see #emit)
       def emit_with_dynamic_identifier(*identifiers, payload:, broker: :synchronous)
         now = Time.now
         event_klass = _event_klass_for(*identifiers)
@@ -94,33 +93,39 @@ module Emittance
       # The payload for this event will be the value returned from the method call.
       #
       # @param method_names [Symbol, String, Array<Symbol, String>] the methods whose calls emit an event
-      #
-      # rubocop:disable Metrics/MethodLength
-      def emits_on(*method_names)
+      def emits_on(*method_names, identifier: nil)
         method_names.each do |method_name|
           non_emitting_method = Emittance::Emitter.non_emitting_method_for method_name
 
-          # rubocop:disable Lint/NonLocalExitFromIterator
-          Emittance::Emitter.emitter_eval(self) do
-            if method_defined?(non_emitting_method)
-              warn "Already emitting on #{method_name.inspect}"
-              return
-            end
-
-            alias_method non_emitting_method, method_name
-
-            module_eval <<-RUBY, __FILE__, __LINE__ + 1
-              def #{method_name}(*args, &blk)
-                return_value = #{non_emitting_method}(*args, &blk)
-                emit_with_dynamic_identifier self.class, __method__, payload: return_value
-                return_value
-              end
-            RUBY
-          end
+          Emittance::Emitter.emitter_eval(self, &_method_patch_block(method_name, non_emitting_method, identifier))
         end
       end
 
       private
+
+      def _method_patch_block(method_name, non_emitting_method, identifier)
+        lambda do |_klass|
+          return if method_defined?(non_emitting_method)
+
+          alias_method non_emitting_method, method_name
+
+          module_eval _method_patch_str(method_name, non_emitting_method, identifier), __FILE__, __LINE__ + 1
+        end
+      end
+
+      def _method_patch_str(method_name, non_emitting_method, identifier)
+        <<~RUBY
+          def #{method_name}(*args, &blk)
+            return_value = #{non_emitting_method}(*args, &blk)
+            if #{!identifier.nil? ? true : false}
+              emit #{!identifier.nil? ? identifier : false}, payload: return_value
+            else
+              emit_with_dynamic_identifier self.class, __method__, payload: return_value
+            end
+            return_value
+          end
+        RUBY
+      end
 
       def _event_klass_for(*identifiers)
         Emittance::Event.event_klass_for(*identifiers)

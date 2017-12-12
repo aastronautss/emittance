@@ -3,24 +3,15 @@
 require 'spec_helper'
 
 RSpec.describe Emittance::Emitter do
-  class Emittance::Emitter::Foo
-    extend Emittance::Emitter
-
-    def foo
-      'bar'
-    end
-    emits_on :foo
-  end
-
   describe '.emits_on' do
     it 'sends a message to the dispatcher' do
       expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      Emittance::Emitter::Foo.new.foo
+      Emittance::SpecFixtures::FooEmitter.new.do_something
     end
 
     it 'doesn\t disrupt normal operation' do
-      expect(Emittance::Emitter::Foo.new.foo).to eq('bar')
+      expect(Emittance::SpecFixtures::FooEmitter.new.do_something).to eq('return value')
     end
   end
 
@@ -30,7 +21,7 @@ RSpec.describe Emittance::Emitter do
 
       expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      Emittance::Emitter::Foo.emit :foo, payload
+      Emittance::SpecFixtures::FooEmitter.emit :foo, payload: payload
     end
 
     it 'can be called from an instance' do
@@ -38,7 +29,7 @@ RSpec.describe Emittance::Emitter do
 
       expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      Emittance::Emitter::Foo.new.emit 'foo', payload
+      Emittance::SpecFixtures::FooEmitter.new.emit 'foo', payload: payload
     end
   end
 end

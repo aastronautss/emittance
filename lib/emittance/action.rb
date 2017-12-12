@@ -138,8 +138,8 @@ module Emittance
       end
 
       # @private
-      def emitting_event_name(action_klass)
-        Emittance::Emitter.emitting_method_event(action_klass, Emittance::Action::EMITTING_METHOD)
+      def emitting_event_identifier(action_klass)
+        Emittance::Event.event_klass_for action_klass
       end
 
       # @private
@@ -165,35 +165,33 @@ module Emittance
 
       # Blocks
 
+      # rubocop:disable Metrics/MethodLength
       def action_klass_blk
         lambda do |_klass|
           extend Emittance::Emitter
 
           class << self
-            # @private
-            # rubocop:disable Lint/NestedMethodDefinition
-            def method_added(method_name)
+            define_method :method_added do |method_name|
               emitting_method = Emittance::Action::EMITTING_METHOD
-              emits_on method_name if method_name == emitting_method
-              super
+              identifier = Emittance::Action.emitting_event_identifier(self)
+              emits_on(method_name, identifier: identifier) if method_name == emitting_method
+              super method_name
             end
           end
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
       def handler_klass_blk(action_klass)
         lambda do |_klass|
           attr_reader :action
 
           extend Emittance::Watcher
 
-          # rubocop:disable Lint/NestedMethodDefinition
-          def initialize(action_obj)
+          define_method :initialize do |action_obj|
             @action = action_obj
           end
 
-          watch Emittance::Action.emitting_event_name(action_klass) do |event|
+          watch Emittance::Action.emitting_event_identifier(action_klass) do |event|
             handler_obj = new(event.emitter)
             handler_method_name = Emittance::Action::HANDLER_METHOD_NAME
 

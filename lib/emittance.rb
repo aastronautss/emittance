@@ -35,10 +35,12 @@ module Emittance
       Emittance::Brokerage.enabled?
     end
 
+    # Not yet implemented!
     # :nocov:
     # @private
-    def suppress(&blk)
-      Emittance::Brokerage.suppress(&blk)
+    def suppress(&_blk)
+      raise NotImplementedError, "This isn't working yet!"
+      # Emittance::Dispatcher.suppress(&blk)
     end
     # :nocov:
   end

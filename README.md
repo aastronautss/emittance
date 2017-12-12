@@ -50,7 +50,7 @@ Foo.emit :something_else_happened # Classes who extended Emitter can also emit e
 As you can see, event types are identified by a symbol. More on that later. You can also pass in an optional payload, which can be any object:
 
 ```ruby
-my_foo.emit :something_happened, "Here's a payload!"
+my_foo.emit :something_happened, payload: "Here's a payload!"
 ```
 
 The above examples are cool, but it's generally a better idea to have an object emit its own events:
@@ -60,7 +60,7 @@ class Foo
   extend Emittance::Emitter
 
   def make_something_happen
-    emit :something_happened, "Here's a payload!"
+    emit :something_happened, payload: "Here's a payload!"
   end
 end
 

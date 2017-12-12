@@ -2,14 +2,6 @@
 
 require 'spec_helper'
 
-class Foo; end
-class Bar; end
-class Foo::Baz; end
-class FooBar; end
-class FooEvent < Emittance::Event; end
-class FooBarEvent < Emittance::Event; end
-class FooBazEvent < Emittance::Event; end
-
 RSpec.describe Emittance::EventLookup do
   after do
     Emittance::EventLookup::Registry.clear_registrations!
@@ -17,38 +9,45 @@ RSpec.describe Emittance::EventLookup do
 
   describe '.find_event_klass' do
     context 'with one argument' do
-      it 'passes a "one-word" class straight through' do
-        value = Emittance::EventLookup.find_event_klass(Foo)
-        expect(value).to eq(FooEvent)
-        expect(value < Emittance::Event).to be(true)
-      end
-
-      it 'passes a "two-word" class straight through' do
-        value = Emittance::EventLookup.find_event_klass(FooBar)
-        expect(value).to eq(FooBarEvent)
-        expect(value < Emittance::Event).to be(true)
-      end
-
-      it 'leaves Event classes unchanged' do
-        value = Emittance::EventLookup.find_event_klass(FooEvent)
-        expect(value).to eq(FooEvent)
-        expect(value < Emittance::Event).to be(true)
-      end
-
       it 'converts a snake-cased symbol to a camel-cased class' do
         value = Emittance::EventLookup.find_event_klass(:foo)
+
         expect(value).to eq(FooEvent)
         expect(value < Emittance::Event).to be(true)
       end
 
       it 'converts a multi-word snake-cased symbol to a camel-cased class' do
         value = Emittance::EventLookup.find_event_klass(:foo_bar)
+
         expect(value).to eq(FooBarEvent)
+        expect(value < Emittance::Event).to be(true)
+      end
+
+      it 'passes the name of a "one-word" class straight through' do
+        value = Emittance::EventLookup.find_event_klass(Foo)
+
+        expect(value).to eq(FooEvent)
+        expect(value < Emittance::Event).to be(true)
+      end
+
+      it 'passes the name of a "two-word" class straight through' do
+        value = Emittance::EventLookup.find_event_klass(FooBar)
+
+        expect(value).to eq(FooBarEvent)
+        expect(value < Emittance::Event).to be(true)
+      end
+
+      it 'leaves Event classes unchanged' do
+        klass_to_pass_through = FooEvent
+        value = Emittance::EventLookup.find_event_klass(klass_to_pass_through)
+
+        expect(value).to eq(klass_to_pass_through)
         expect(value < Emittance::Event).to be(true)
       end
 
       it 'creates a class where none existed' do
         value = Emittance::EventLookup.find_event_klass(:foo_bar_bar)
+
         expect(value).to eq(FooBarBarEvent)
         expect(value < Emittance::Event).to be(true)
       end
@@ -65,14 +64,23 @@ RSpec.describe Emittance::EventLookup do
       end
 
       it 'doesn\'t care about crazy characters or names' do
-        weird_identifier = '*()&/Foo, Bar!@!&&&&'
+        weird_identifier = '*()&Foo, Bar!@!&&&&'
         value = Emittance::EventLookup.find_event_klass(weird_identifier)
+
         expect(value).to eq(FooBarEvent)
+        expect(value < Emittance::Event).to be(true)
+      end
+
+      it 'can handle namespaced symbols' do
+        value = Emittance::EventLookup.find_event_klass(:'foo/baz')
+
+        expect(value).to eq(Foo::BazEvent)
         expect(value < Emittance::Event).to be(true)
       end
 
       it 'can handle namespaced objects' do
         value = Emittance::EventLookup.find_event_klass(Foo::Baz)
+
         expect(value).to eq(Foo::BazEvent)
         expect(value < Emittance::Event).to be(true)
       end
@@ -102,12 +110,12 @@ RSpec.describe Emittance::EventLookup do
   describe '.identifiers_for_klass' do
     it 'converts a one-word class to a symbol' do
       value = Emittance::EventLookup.identifiers_for_klass(FooEvent)
-      expect(value).to eq(:foo)
+      expect(value).to include(:foo)
     end
 
     it 'converts a multi-word class to a symbol' do
       value = Emittance::EventLookup.identifiers_for_klass(FooBarEvent)
-      expect(value).to eq(:foo_bar)
+      expect(value).to include(:foo_bar)
     end
   end
 end
