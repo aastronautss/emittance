@@ -64,6 +64,7 @@ module Emittance
       #
       # @param klass [Class] the class you wish to register the identifier for
       # @param identifier [Symbol] identifier you want to identify the class as
+      # @return [Class] the class for which you've just registered an identifier
       def register_identifier(klass, identifier)
         Emittance::EventLookup::Registry.register_identifier klass: klass, identifier: identifier
       end
@@ -202,6 +203,9 @@ module Emittance
         include Emittance::Helpers::ConstantHelpers
 
         # Finds or generates the event class associated with the identifier.
+        #
+        # @param identifier [Symbol] the identifier registered to the event class you wish to fetch
+        # @return [Class] the event class you wish to fetch
         def fetch_event_klass(identifier)
           klass = nil
 
@@ -212,13 +216,20 @@ module Emittance
         end
 
         # Retrieves all identifiers associated with the event class.
+        #
+        # @param event_klass [Class] the class you want the identifiers for
+        # @return [Set<Symbol>] all identifiers that can be used to identify the given event class
         def identifiers_for_klass(event_klass)
           lookup_klass_to_identifier_mapping(event_klass) ||
             (create_mapping_for_klass(event_klass) && lookup_klass_to_identifier_mapping(event_klass))
         end
 
         # Registers the given identifier for the given event class.
-        def register_identifier(identifier:, klass:)
+        #
+        # @param klass [Class] the event class you would like to register the identifier for
+        # @param identifier [Symbol] the identifier with which you want to identify the event class
+        # @return [Class] the event class for which you've registered the identifier
+        def register_identifier(klass:, identifier:)
           raise Emittance::InvalidIdentifierError unless valid_identifier? identifier
           raise Emittance::IdentifierCollisionError if identifier_reserved? identifier, klass
 
@@ -226,9 +237,13 @@ module Emittance
 
           klass_to_identifier_mappings[klass] ||= empty_collection
           klass_to_identifier_mappings[klass] << identifier
+
+          klass
         end
 
         # Clears all registrations.
+        #
+        # @return [Boolean] true
         def clear_registrations!
           identifier_to_klass_mappings.clear
           klass_to_identifier_mappings.clear

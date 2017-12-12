@@ -9,7 +9,11 @@ module Emittance
     # method on the caller of +watch+ when the event happens. Otherwise, it will run the callback block.
     #
     # @param identifier [Symbol] the event's identifier
-    # @callback_method
+    # @param callback_method [Symbol] one option for adding a callback--the method on the object to call when the
+    #   event fires
+    # @param callback [Block] the other option for adding a callback--the block you wish to be executed when the event
+    #   fires
+    # @return [Proc] the block that will run when the event fires
     def watch(identifier, callback_method = nil, &callback)
       if callback_method
         Emittance::Dispatcher.register_method_call identifier, self, callback_method

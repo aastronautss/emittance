@@ -25,6 +25,8 @@ module Emittance
         event_klass = find_event_klass identifier
         registrations[event_klass] ||= empty_registration
         registrations_for(event_klass) << Emittance::Registration.new(event_klass, &callback)
+
+        callback
       end
 
       def register_method_call(identifier, object, method_name)
