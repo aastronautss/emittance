@@ -37,6 +37,9 @@ module Emittance
       end
 
       # Strip all characters that can't go into a constant name.
+      #
+      # @param str [String] the string from which you want to remove punctuation
+      # @return [String] a new string with punctuation stripped
       def clean_up_punctuation(str)
         str.gsub(%r{[^A-Za-z\d\_\:\/]}, '')
       end
