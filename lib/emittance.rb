@@ -19,34 +19,37 @@ require 'emittance/action'
 #
 module Emittance
   class << self
-    # Enable eventing process-wide.
+    # Enable eventing process-wide
     def enable!
       Emittance::Brokerage.enable!
     end
 
-    # Disable eventing process-wide.
+    # Disable eventing process-wide
     def disable!
       Emittance::Brokerage.disable!
     end
 
-    # @return [Boolean] true if eventing is enabled, false otherwise.
+    # @return [Boolean] true if eventing is enabled, false otherwise
     def enabled?
       Emittance::Brokerage.enabled?
     end
 
+    # @return [Class] the currently enabled broker class
     def broker
       Emittance::Brokerage.broker
     end
 
+    # @return [Class] the dispatcher attached to the currently enabled broker
     def dispatcher
       broker.dispatcher
     end
 
+    # @param [identifier] the identifier that can be used to identify the broker you wish to use
     def use_broker(identifier)
       Emittance::Brokerage.use_broker identifier
     end
 
-    # Not yet implemented!
+    # Not yet implemented! Remove nocov and private flags when finished.
     # :nocov:
     # @private
     def suppress(&_blk)
