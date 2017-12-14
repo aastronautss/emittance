@@ -2,6 +2,9 @@
 
 module Emittance
   class Synchronous
+    ##
+    # The synchronous dispatcher. Runs callbacks one-by-one, in series.
+    #
     class Dispatcher
       @registrations = {}
       @enabled = true

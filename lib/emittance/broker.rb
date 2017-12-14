@@ -14,7 +14,7 @@ module Emittance
       end
 
       def dispatcher
-        self.const_get DISPATCHER_KLASS_NAME
+        const_get DISPATCHER_KLASS_NAME
       end
 
       def inherited(subklass)
