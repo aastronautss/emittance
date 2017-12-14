@@ -62,11 +62,11 @@ module Emittance
       #   if not using the default.
       #
       # @return the payload
-      def emit(identifier, payload: nil, broker: :synchronous)
+      def emit(identifier, payload: nil)
         now = Time.now
         event_klass = _event_klass_for identifier
         event = event_klass.new(self, now, payload)
-        _send_to_broker event, broker
+        _send_to_broker event
 
         payload
       end
@@ -77,11 +77,11 @@ module Emittance
       # @param identifiers [*] anything that can be used to generate an +Event+ class.
       # @param payload (@see #emit)
       # @param broker (@see #emit)
-      def emit_with_dynamic_identifier(*identifiers, payload:, broker: :synchronous)
+      def emit_with_dynamic_identifier(*identifiers, payload:)
         now = Time.now
         event_klass = _event_klass_for(*identifiers)
         event = event_klass.new(self, now, payload)
-        _send_to_broker event, broker
+        _send_to_broker event
 
         payload
       end
@@ -131,8 +131,8 @@ module Emittance
         Emittance::Event.event_klass_for(*identifiers)
       end
 
-      def _send_to_broker(event, broker)
-        Emittance::Brokerage.send_event event, broker
+      def _send_to_broker(event)
+        Emittance::Brokerage.send_event event
       end
     end
   end
