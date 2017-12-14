@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Emittance::Emitter do
   describe '.emits_on' do
     it 'sends a message to the dispatcher' do
-      expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
+      expect(Emittance.dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
       Emittance::SpecFixtures::FooEmitter.new.do_something
     end
@@ -19,7 +19,7 @@ RSpec.describe Emittance::Emitter do
     it 'sends a message to the dispatcher' do
       payload = ['hello', 'world']
 
-      expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
+      expect(Emittance.dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
       Emittance::SpecFixtures::FooEmitter.emit :foo, payload: payload
     end
@@ -27,7 +27,7 @@ RSpec.describe Emittance::Emitter do
     it 'can be called from an instance' do
       payload = ['hello', 'world']
 
-      expect(Emittance::Dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
+      expect(Emittance.dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
       Emittance::SpecFixtures::FooEmitter.new.emit 'foo', payload: payload
     end

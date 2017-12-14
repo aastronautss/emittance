@@ -35,6 +35,18 @@ module Emittance
       Emittance::Brokerage.enabled?
     end
 
+    def broker
+      Emittance::Brokerage.broker
+    end
+
+    def dispatcher
+      broker.dispatcher
+    end
+
+    def use_broker(identifier)
+      Emittance::Brokerage.use_broker identifier
+    end
+
     # Not yet implemented!
     # :nocov:
     # @private
@@ -45,3 +57,5 @@ module Emittance
     # :nocov:
   end
 end
+
+Emittance.use_broker :synchronous
