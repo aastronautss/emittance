@@ -13,7 +13,6 @@ require 'emittance/event'
 require 'emittance/emitter'
 require 'emittance/watcher'
 require 'emittance/action'
-require 'emittance/dispatcher'
 
 ##
 # The base namespace for this library. You can do some basic configuration stuff by calling methods on its singleton.
