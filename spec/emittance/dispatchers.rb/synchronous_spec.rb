@@ -2,14 +2,14 @@
 
 require 'spec_helper'
 
-RSpec.describe Emittance::Dispatcher do
+RSpec.describe Emittance::Synchronous::Dispatcher do
   before do
-    @previous_registrations = Emittance::Dispatcher.instance_variable_get '@registrations'
-    Emittance::Dispatcher.instance_variable_set '@registrations', {}
+    @previous_registrations = Emittance::Synchronous::Dispatcher.instance_variable_get '@registrations'
+    Emittance::Synchronous::Dispatcher.instance_variable_set '@registrations', {}
   end
 
   after do
-    Emittance::Dispatcher.instance_variable_set '@registrations', @previous_registrations
+    Emittance::Synchronous::Dispatcher.instance_variable_set '@registrations', @previous_registrations
   end
 
   let(:emitter) { double 'emitter' }
@@ -17,7 +17,7 @@ RSpec.describe Emittance::Dispatcher do
   let(:payload) { 'hello' }
   let(:event) { FooEvent.new emitter, timestamp, payload }
 
-  subject { Emittance::Dispatcher }
+  subject { Emittance::Synchronous::Dispatcher }
 
   describe '.register' do
     it 'stores a registration' do

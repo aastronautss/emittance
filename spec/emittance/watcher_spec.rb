@@ -8,7 +8,7 @@ RSpec.describe Emittance::Watcher do
     stub_const('Bar', Class.new { include Emittance::Watcher })
   end
 
-  after { Emittance::Dispatcher.clear_registrations! }
+  after { Emittance.dispatcher.clear_registrations! }
 
   describe '#watch' do
     it 'watches for emissions' do

@@ -16,10 +16,16 @@ module Emittance
     # @return [Proc] the block that will run when the event fires
     def watch(identifier, callback_method = nil, &callback)
       if callback_method
-        Emittance::Dispatcher.register_method_call identifier, self, callback_method
+        _dispatcher.register_method_call identifier, self, callback_method
       else
-        Emittance::Dispatcher.register identifier, &callback
+        _dispatcher.register identifier, &callback
       end
+    end
+
+    private
+
+    def _dispatcher
+      Emittance.dispatcher
     end
   end
 end

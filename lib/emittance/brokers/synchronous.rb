@@ -8,8 +8,10 @@ module Emittance
     class << self
       # (@see Emittance::Broker.process_event)
       def process_event(event)
-        Emittance::Dispatcher.process_event event
+        dispatcher.process_event event
       end
     end
   end
 end
+
+require 'emittance/dispatchers/synchronous'

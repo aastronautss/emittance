@@ -7,13 +7,21 @@ module Emittance
   #
   class Brokerage
     @enabled = true
+    @current_broker = nil
 
     class << self
       # @param event [Emittance::Event] the event object
       # @param broker_id [Symbol] a symbol that can be used to identify a broker by
-      def send_event(event, broker_id)
-        broker = registry.fetch(broker_id)
+      def send_event(event)
         broker.process_event event
+      end
+
+      def broker
+        @current_broker
+      end
+
+      def use_broker(identifier)
+        @current_broker = registry.fetch identifier
       end
 
       # @param broker [Emittance::Broker] the broker you would like to register
