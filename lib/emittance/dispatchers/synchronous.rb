@@ -25,7 +25,7 @@ module Emittance
         def register(identifier, &callback)
           event_klass = find_event_klass identifier
           registrations[event_klass] ||= empty_registration
-          registrations_for(event_klass) << Emittance::Registration.new(event_klass, &callback)
+          registrations_for(event_klass) << Registration.new(event_klass, &callback)
 
           callback
         end
@@ -59,6 +59,20 @@ module Emittance
 
         def lambda_for_method_call(object, method_name)
           ->(event) { object.send method_name, event }
+        end
+      end
+
+      # @private
+      class Registration
+        attr_reader :event_klass
+
+        def initialize(event_klass, &callback)
+          @event_klass = event_klass
+          @callback = callback
+        end
+
+        def call(event)
+          @callback.call event
         end
       end
     end

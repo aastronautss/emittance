@@ -16,15 +16,6 @@ module Emittance
       def dispatcher
         const_get DISPATCHER_KLASS_NAME
       end
-
-      def inherited(subklass)
-        register_broker subklass
-        super
-      end
-
-      def register_broker(broker)
-        Emittance::Brokerage.register_broker broker
-      end
     end
   end
 end

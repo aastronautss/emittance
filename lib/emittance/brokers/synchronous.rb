@@ -15,3 +15,5 @@ module Emittance
 end
 
 require 'emittance/dispatchers/synchronous'
+
+Emittance::Brokerage.register_broker Emittance::Synchronous, :synchronous
