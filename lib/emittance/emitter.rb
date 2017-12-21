@@ -114,7 +114,7 @@ module Emittance
       end
 
       def _method_patch_str(method_name, non_emitting_method, identifier)
-        <<~RUBY
+        <<-RUBY
           def #{method_name}(*args, &blk)
             return_value = #{non_emitting_method}(*args, &blk)
             if #{!identifier.nil? ? true : false}
