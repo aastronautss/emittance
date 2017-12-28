@@ -33,7 +33,7 @@ module Emittance
       def extended(extender)
         extender.extend Emittance::Watcher
 
-        emitter.watch :@all, :_emittance_handle_event
+        extender.watch :@all, :_emittance_handle_event
       end
     end
 
@@ -43,12 +43,12 @@ module Emittance
       identifiers = event.identifiers
       identifiers.each do |identifier|
         formatted_identifier = _emittance_format_identifier(identifier)
-        send formatted_identifier
+        send(formatted_identifier) if respond_to?(formatted_identifier)
       end
     end
 
     def _emittance_format_identifier(identifier)
-      identifier.split('/').last
+      identifier.to_s.split('/').last
     end
   end
 end

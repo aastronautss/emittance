@@ -63,7 +63,12 @@ module Emittance
 
       def keys_for_event_identifier(identifier)
         klass = Emittance::EventLookup.find_event_klass(identifier)
-        [klass, [klass]]
+        keys = [klass] + keys_matching_event_klass(klass)
+        [klass, keys]
+      end
+
+      def keys_matching_event_klass(_klass)
+        [:@all]
       end
 
       def collection_for(lookup_term, keys)

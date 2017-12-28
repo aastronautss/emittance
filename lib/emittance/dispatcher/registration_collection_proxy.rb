@@ -1,4 +1,4 @@
-# frozen_string_literal
+# frozen_string_literal: true
 
 module Emittance
   class Dispatcher
@@ -24,14 +24,16 @@ module Emittance
 
       # @return [Boolean] true if there are no registrations at all, false otherwise
       def empty?
-        mappings.values.all? { |val| val.empty? }
+        mappings.values.all?(&:empty?)
       end
 
+      # @return [RegistrationCollectionProxy] self
       def <<(item)
         mappings[lookup_term] << item
         self
       end
 
+      # @return [RegistrationCollectionProxy] self
       def clear
         mappings.values.each(&:clear)
         self
