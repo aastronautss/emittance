@@ -18,7 +18,6 @@ module Emittance
         def _register(identifier, &callback)
           registrations = registrations_for identifier
           registrations << callback
-
           callback
         end
 
