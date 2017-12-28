@@ -6,11 +6,13 @@ require 'emittance/errors'
 require 'emittance/helpers/string_helpers'
 require 'emittance/helpers/constant_helpers'
 require 'emittance/event_lookup'
+require 'emittance/dispatcher'
 require 'emittance/brokerage'
 require 'emittance/broker'
 require 'emittance/event'
 require 'emittance/emitter'
 require 'emittance/watcher'
+require 'emittance/notifier'
 require 'emittance/action'
 
 ##

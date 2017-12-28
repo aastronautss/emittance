@@ -32,6 +32,14 @@ module Emittance
       include Emittance::Watcher
     end
 
+    class FooNotifier
+      extend Emittance::Notifier
+
+      def self.foo
+        'return value'
+      end
+    end
+
     class FooAction
       include Emittance::Action
 
