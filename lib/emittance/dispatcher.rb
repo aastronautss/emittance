@@ -63,9 +63,11 @@ module Emittance
     end
 
     ##
-    # A proxy for a hash. Identifies special identifiers
+    # A proxy for a hash. Identifies special identifiers.
     #
     class RegistrationMap
+      attr_reader :reg_map
+
       class << self
         def special_identifier?(identifier)
           identifier.to_s =~ /^\@/
@@ -77,9 +79,8 @@ module Emittance
       end
 
       def [](identifier)
-        keys = keys_for(identifier)
-        reg_map[keys] ||= empty_registration
-        reg_map[keys]
+        lookup_term, keys = keys_for(identifier)
+        collection_for(lookup_term, keys)
       end
 
       def each_key(*args, &blk)
@@ -88,10 +89,37 @@ module Emittance
 
       private
 
-      attr_reader :reg_map
-
       def keys_for(identifier)
-        Emittance::EventLookup.find_event_klass(identifier)
+        if special_identifier?(identifier)
+          keys_for_special_identifier(identifier)
+        else
+          keys_for_event_identifier(identifier)
+        end
+      end
+
+      def keys_for_special_identifier(identifier)
+        keys = [identifier.to_sym]
+
+        case identifier.to_s
+        when '@all'
+          keys += reg_map.keys.select { |key| key.is_a?(Class) }
+        end
+      end
+
+      def keys_for_event_identifier(identifier)
+        klass = Emittance::EventLookup.find_event_klass(identifier)
+        [klass, [klass]]
+      end
+
+      def collection_for(lookup_term, keys)
+        mappings = Hash[
+          keys.map do |key|
+            reg_map[key] ||= empty_registration
+            [key, reg_map[key]]
+          end
+        ]
+
+        RegistrationCollectionProxy.new(lookup_term, mappings)
       end
 
       def empty_registration
@@ -103,7 +131,32 @@ module Emittance
       end
     end
 
-    class RegistrationCollection
+    class RegistrationCollectionProxy
+      def initialize(lookup_term, mappings)
+        @lookup_term = lookup_term
+        @mappings = mappings
+      end
+
+      def each(*args, &blk)
+        arrays = mappings.values.map(&:to_a)
+        arrays.flatten.each(*args, &blk)
+      end
+
+      def empty?
+        mappings.values.all? { |val| val.empty? }
+      end
+
+      def <<(item)
+        mappings[lookup_term] << item
+      end
+
+      def clear
+        mappings.values.each(&:clear)
+      end
+
+      private
+
+      attr_reader :lookup_term, :mappings
     end
   end
 end
