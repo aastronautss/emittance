@@ -66,11 +66,12 @@ module Emittance
     # A proxy for a hash. Identifies special identifiers.
     #
     class RegistrationMap
-      attr_reader :reg_map
+      SPECIAL_IDENTIFIER_REGEX = /^\@/
 
       class << self
+        # @param
         def special_identifier?(identifier)
-          identifier.to_s =~ /^\@/
+          identifier.to_s =~ SPECIAL_IDENTIFIER_REGEX
         end
       end
 
@@ -88,6 +89,8 @@ module Emittance
       end
 
       private
+
+      attr_reader :reg_map
 
       def keys_for(identifier)
         if special_identifier?(identifier)
@@ -131,6 +134,9 @@ module Emittance
       end
     end
 
+    ##
+    # A collection proxy for registrations. Can include multiple key/value pairs.
+    #
     class RegistrationCollectionProxy
       def initialize(lookup_term, mappings)
         @lookup_term = lookup_term
