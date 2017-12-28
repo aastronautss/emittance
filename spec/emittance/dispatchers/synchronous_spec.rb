@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Emittance::Synchronous::Dispatcher do
   before do
     @previous_registrations = Emittance::Synchronous::Dispatcher.instance_variable_get '@registrations'
-    Emittance::Synchronous::Dispatcher.instance_variable_set '@registrations', {}
+    Emittance::Synchronous::Dispatcher.instance_variable_set '@registrations', Emittance::Dispatcher::RegistrationMap.new
   end
 
   after do
