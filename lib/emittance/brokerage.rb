@@ -11,9 +11,8 @@ module Emittance
 
     class << self
       # @param event [Emittance::Event] the event object
-      # @param broker_id [Symbol] a symbol that can be used to identify a broker by
       def send_event(event)
-        broker.process_event event
+        broker.process_event(event) if enabled?
       end
 
       # @return [Class] the currently selected broker
