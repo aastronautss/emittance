@@ -14,11 +14,11 @@ module Emittance
     # @param callback [Block] the other option for adding a callback--the block you wish to be executed when the event
     #   fires
     # @return [Proc] the block that will run when the event fires
-    def watch(identifier, callback_method = nil, &callback)
+    def watch(identifier, callback_method = nil, params = {}, &callback)
       if callback_method
-        _dispatcher.register_method_call identifier, self, callback_method
+        _dispatcher.register_method_call identifier, self, callback_method, params
       else
-        _dispatcher.register identifier, &callback
+        _dispatcher.register identifier, params, &callback
       end
     end
 

@@ -144,9 +144,7 @@ module Emittance
 
       # @private
       def find_or_create_klass(klass_name)
-        unless Object.const_defined? klass_name
-          set_namespaced_constant_by_name klass_name, Class.new
-        end
+        set_namespaced_constant_by_name(klass_name, Class.new) unless Object.const_defined?(klass_name)
 
         Object.const_get klass_name
       end
@@ -195,12 +193,11 @@ module Emittance
             handler_obj = new(event.emitter)
             handler_method_name = Emittance::Action::HANDLER_METHOD_NAME
 
-            if handler_obj.respond_to? handler_method_name
-              handler_obj.send handler_method_name
-            end
+            handler_obj.send(handler_method_name) if handler_obj.respond_to?(handler_method_name)
           end
         end
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end
