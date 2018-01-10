@@ -15,13 +15,13 @@ module Emittance
           end
         end
 
-        def _register(identifier, &callback)
+        def _register(identifier, _params = {}, &callback)
           registrations = registrations_for identifier
           registrations << callback
           callback
         end
 
-        def _register_method_call(identifier, object, method_name)
+        def _register_method_call(identifier, object, method_name, _params = {})
           register identifier, &lambda_for_method_call(object, method_name)
         end
 

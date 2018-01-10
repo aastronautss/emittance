@@ -30,13 +30,13 @@ module Emittance
       end
 
       # Calls the subclass's +_register+ method.
-      def register(identifier, &callback)
-        _register(identifier, &callback)
+      def register(identifier, params = {}, &callback)
+        _register(identifier, params, &callback)
       end
 
       # Calls the subclass's +_register_method_call+ method.
-      def register_method_call(identifier, object, method_name)
-        _register_method_call(identifier, object, method_name)
+      def register_method_call(identifier, object, method_name, params = {})
+        _register_method_call(identifier, object, method_name, params)
       end
 
       # @param identifier the identifier the registrations for which you would like to look up
@@ -65,11 +65,11 @@ module Emittance
         raise NotImplementedError
       end
 
-      def _register(_identifier, &_callback)
+      def _register(_identifier, _params, &_callback)
         raise NotImplementedError
       end
 
-      def _register_method_call(_identifier, _object, _method_name)
+      def _register_method_call(_identifier, _object, _method_name, _params)
         raise NotImplementedError
       end
     end
