@@ -26,7 +26,6 @@ module Emittance
 
       # Calls the subclass's +_process_event+ method.
       def process_event(event)
-        event = Emittance::Middleware.down(event)
         _process_event(event)
       end
 

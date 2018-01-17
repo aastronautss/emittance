@@ -16,27 +16,20 @@ RSpec.describe Emittance::Emitter do
   end
 
   describe '#emit' do
-    let(:payload) { payload = ['hello', 'world'] }
-    let(:action) { Emittance::SpecFixtures::FooEmitter.emit :foo, payload: payload }
-
-    before { allow(Emittance.dispatcher).to receive(:process_event).with(anything) }
-
     it 'sends a message to the dispatcher' do
+      payload = ['hello', 'world']
+
       expect(Emittance.dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      action
+      Emittance::SpecFixtures::FooEmitter.emit :foo, payload: payload
     end
 
     it 'can be called from an instance' do
+      payload = ['hello', 'world']
+
       expect(Emittance.dispatcher).to receive(:process_event).with(kind_of Emittance::Event)
 
-      Emittance::SpecFixtures::FooEmitter.new.emit :foo, payload: payload
-    end
-
-    it 'calls the middleware stack' do
-      expect(Emittance::Middleware).to receive(:up).with(kind_of Emittance::Event).and_return(kind_of Emittance::Event)
-
-      action
+      Emittance::SpecFixtures::FooEmitter.new.emit 'foo', payload: payload
     end
   end
 end
