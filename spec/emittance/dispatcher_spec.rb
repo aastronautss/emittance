@@ -14,7 +14,6 @@ RSpec.describe Emittance::Dispatcher do
     end
 
     it 'calls the middleware' do
-      expect(Emittance::Middleware).to receive(:down).with(event).and_return(event)
       expect { action }.to raise_error(NotImplementedError)
     end
   end

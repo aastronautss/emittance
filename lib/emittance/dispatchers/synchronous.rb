@@ -11,6 +11,7 @@ module Emittance
 
         def _process_event(event)
           registrations_for(event).each do |registration|
+            event = Emittance::Middleware.down(event)
             registration.call event
           end
         end
