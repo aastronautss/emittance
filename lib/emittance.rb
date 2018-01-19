@@ -12,7 +12,6 @@ require 'emittance/broker'
 require 'emittance/event'
 require 'emittance/emitter'
 require 'emittance/watcher'
-require 'emittance/middleware'
 require 'emittance/notifier'
 require 'emittance/action'
 

@@ -12,10 +12,7 @@ module Emittance
     class << self
       # @param event [Emittance::Event] the event object
       def send_event(event)
-        return nil unless enabled?
-
-        event = Emittance::Middleware.up(event)
-        broker.process_event(event)
+        broker.process_event(event) if enabled?
       end
 
       # @return [Class] the currently selected broker

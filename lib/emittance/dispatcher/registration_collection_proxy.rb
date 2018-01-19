@@ -6,6 +6,8 @@ module Emittance
     # A collection proxy for registrations. Can include multiple key/value pairs.
     #
     class RegistrationCollectionProxy
+      include Enumerable
+
       # @param lookup_term the term initially used to lookup the registrations
       # @param mappings [Hash] the mappings of identifiers to their respective registrations
       def initialize(lookup_term, mappings)
@@ -13,12 +15,13 @@ module Emittance
         @mappings = mappings
       end
 
-      # @param args args passed to +Array#each+
-      # @param blk block passed to +Array#each+
       # @return [RegistrationCollectionProxy] self
-      def each(*args, &blk)
-        arrays.flatten.each(*args, &blk)
-        self
+      def each
+        return enum_for(:each) unless block_given?
+
+        arrays.flatten.each do |registration|
+          yield registration
+        end
       end
 
       # @return [Boolean] true if there are no registrations at all, false otherwise
