@@ -12,6 +12,10 @@ RSpec.describe Emittance::Dispatcher do
     it 'raises an error' do
       expect { action }.to raise_error(NotImplementedError)
     end
+
+    it 'calls the middleware' do
+      expect { action }.to raise_error(NotImplementedError)
+    end
   end
 
   describe '.register' do

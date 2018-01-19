@@ -35,7 +35,7 @@ module Emittance
     class FooNotifier
       extend Emittance::Notifier
 
-      def self.foo
+      def self.foo(event)
         'return value'
       end
     end

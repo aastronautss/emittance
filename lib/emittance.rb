@@ -12,6 +12,7 @@ require 'emittance/broker'
 require 'emittance/event'
 require 'emittance/emitter'
 require 'emittance/watcher'
+require 'emittance/middleware'
 require 'emittance/notifier'
 require 'emittance/action'
 
@@ -45,9 +46,22 @@ module Emittance
       broker.dispatcher
     end
 
-    # @param [identifier] the identifier that can be used to identify the broker you wish to use
+    # @param identifier [#to_sym] the identifier that can be used to identify the broker you wish to use
     def use_broker(identifier)
       Emittance::Brokerage.use_broker identifier
+    end
+
+    #   Emittance.use_middleware MyMiddleware
+    #   Emittance.use_middleware MyOtherMiddleware, MyCoolMiddleware
+    #
+    # @param middlewares [Array<Class>] each middleware you wish to run.
+    def use_middleware(*middlewares)
+      Emittance::Middleware.register middlewares
+    end
+
+    # Removes all middlewares from the app.
+    def clear_middleware!
+      Emittance::Middleware.clear_registrations!
     end
 
     # Not yet implemented! Remove nocov and private flags when finished.
