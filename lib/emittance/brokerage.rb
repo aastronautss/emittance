@@ -5,6 +5,23 @@ module Emittance
   # The clearinghouse for brokers. Registers brokers, and decides which broker to use when sent an event. First point of
   # contact for event propagation.
   #
+  # == Multiple brokers
+  #
+  # Emittance can support multiple brokers. This is implemented in a whitelist fashion. To enable a broker, just call
+  # {Emittance::Brokerage.use_broker}:
+  #
+  #   Emittance.use_broker :asynchronous
+  #
+  # Watchers subscribe to events on a per-broker basis. By default, a watcher will subscribe on the default broker
+  # Emittance initializes with +synchronous+ as the default broker). You can override that default by specifying it in
+  # a parameter on the {Emittance::Watcher.watch} method:
+  #
+  #    MyWatcher.watch :something_cool_happened, broker: :asynchronous { |event| puts event.payload.inspect }
+  #
+  # To change the default broker, use {Emittance::Brokerage.default_broker=}:
+  #
+  #   Emittance.default_broker = :asynchronous
+  #
   module Brokerage
     class BrokerNotInUseError < StandardError; end
 
@@ -70,7 +87,7 @@ module Emittance
         @default_broker = broker
       end
 
-      # If you have created your own broker, this method adds it to the available pool of brokers.
+      # A semi-private API. If you have created your own broker, this method adds it to the available pool of brokers.
       #
       # Emittance::Brokerage.register_broker MyBroker, :mine
       #
