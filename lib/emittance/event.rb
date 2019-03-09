@@ -115,6 +115,7 @@ module Emittance
       # @param sym [Symbol] the identifier you wish to identify this event by when emitting and watching for it
       def add_identifier(sym)
         raise Emittance::InvalidIdentifierError, 'Identifiers must respond to #to_sym' unless sym.respond_to?(:to_sym)
+
         EventLookup.register_identifier self, sym.to_sym
       end
 

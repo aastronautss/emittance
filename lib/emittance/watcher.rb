@@ -11,21 +11,22 @@ module Emittance
     # @param identifier [Symbol] the event's identifier
     # @param callback_method [Symbol] one option for adding a callback--the method on the object to call when the
     #   event fires
+    # @param params [Hash] any parameters related to the registration of a watcher
     # @param callback [Block] the other option for adding a callback--the block you wish to be executed when the event
     #   fires
     # @return [Proc] the block that will run when the event fires
     def watch(identifier, callback_method = nil, params = {}, &callback)
       if callback_method
-        _dispatcher.register_method_call identifier, self, callback_method, params
+        _dispatcher(params).register_method_call identifier, self, callback_method, params
       else
-        _dispatcher.register identifier, params, &callback
+        _dispatcher(params).register identifier, params, &callback
       end
     end
 
     private
 
-    def _dispatcher
-      Emittance.dispatcher
+    def _dispatcher(params)
+      Emittance.dispatcher_for(params[:broker])
     end
   end
 end
