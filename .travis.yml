@@ -3,7 +3,6 @@ env:
     - secure: "uBY5L4Qs7b9dEVG2XAJ2x9O+PgJTIA9Ezkiu7KrfxjNhMViSUOGmkKvVxBWKwFzChfsFT2wQK/TYcNNtpZoFCLxqyBTCFV1DLHiPQ3mAW4yHPiRbwkEX5HSjypn+4ONd+nk26hMgfrnnAoHM5m4tkAQRo1dY8ARv46iH2wctErVYzj5ACf/OUmrIoF/+QXkE98oOWLMYhtyAhmlBusdcM+czreMD2BUzFilkhVLLY41KA1f7EE0W4v8aY87SOsBR6Q6bFKXm9bW3xxR6nKHukFXgXtfkkylcGOZur8VrvTxx/NAKTOyx/mCo4h1SqwZrIJQoPh3uBwv6n41YGkIzFQoebPiUnnsVYCnlz0V2AnnCdcZ/LrpIVra+bN7bh3oMtEKmlrU8cHeRQy0HlaD9u4o1KYwlg0X8lApGpsSsc+GKAC9MzGk4P3aOWFFSxqs/oo98bhlxuCvYjEh+x/aXeOqG6a/3Vlg6p/gJPxqDlaHmF6JfYGWrCysnJQtbBAstH/HhT2XHm/96uH3OURI7o+tx/I63/Qz/YG68O0nV9leFUrcmARK8XMavn1N5BM0Uoh/XhC0JUnu3GJJ7g7kABPkck81U1qWskDMeUm8hhfJgWVSixnAxKBehX+rKrizbcj3/UyqYKy7SnNHJ6fQo34rBxDLe0O8ULbWifj5/Xg4="
 language: ruby
 rvm:
-  - 2.1.2
   - 2.2.10
   - 2.4.5
   - 2.5.3
