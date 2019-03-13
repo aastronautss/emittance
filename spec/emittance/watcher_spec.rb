@@ -39,5 +39,33 @@ RSpec.describe Emittance::Watcher do
 
       Foo.emit :test_foo, payload: 'bar'
     end
+
+    context 'with multiple brokers' do
+      let(:dispatcher1) { double 'dispatcher', process_event: nil }
+      let(:dispatcher2) { double 'dispatcher', process_event: nil }
+      let(:broker1) { double 'broker1', process_event: nil, dispatcher: dispatcher1 }
+      let(:broker2) { double 'broker2', process_event: nil, dispatcher: dispatcher2 }
+
+      before do
+        @previous_brokers = Emittance::Brokerage::Registry.instance_variable_get('@brokers')
+        Emittance::Brokerage::Registry.instance_variable_set('@brokers', {})
+
+        Emittance::Brokerage.register_broker(broker1, :broker1)
+        Emittance::Brokerage.register_broker(broker2, :broker2)
+      end
+
+      after { Emittance::Brokerage::Registry.instance_variable_set('@brokers', @previous_brokers) }
+
+      it 'can watch on a specific broker' do
+        expect(dispatcher1).to receive(:register).with(:something_happened, kind_of(Hash))
+        expect(dispatcher2).to receive(:register).with(:something_happened, kind_of(Hash))
+
+        bar1 = Bar.new
+
+        bar1.watch(:something_happened, broker: :broker1) { |event| print event.payload }
+        bar1.watch(:something_happened, broker: :broker2) { |event| print event.payload }
+      end
+    end
+
   end
 end
