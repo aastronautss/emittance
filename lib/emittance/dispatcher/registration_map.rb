@@ -8,7 +8,7 @@ module Emittance
     # A proxy for a hash. Identifies special identifiers.
     #
     class RegistrationMap
-      SPECIAL_IDENTIFIER_REGEX = /^\@/
+      SPECIAL_IDENTIFIER_REGEX = /^\@/.freeze
 
       class << self
         # @param identifier the identifier we want to know information about
