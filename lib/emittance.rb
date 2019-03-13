@@ -22,6 +22,8 @@ require 'emittance/action'
 #
 module Emittance
   class << self
+    attr_reader :event_routing_strategy
+
     # Enable eventing process-wide
     def enable!
       Emittance::Brokerage.enable!
@@ -85,10 +87,6 @@ module Emittance
       # Emittance::Dispatcher.suppress(&blk)
     end
     # :nocov:
-
-    def event_routing_strategy
-      @event_routing_strategy
-    end
 
     def event_routing_strategy=(new_strategy)
       @event_routing_strategy = new_strategy

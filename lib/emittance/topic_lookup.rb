@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Emittance
   ##
   # Since events don't need to be dynamically generated when using topics, we essentially want to stub out all of the

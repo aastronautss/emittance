@@ -63,7 +63,7 @@ module Emittance
       def emit(identifier, payload: nil)
         now = Time.now
         event_klass = _event_klass_for identifier
-        event = event_klass.new(self, now, payload).tap { |event| event.topic = identifier }
+        event = event_klass.new(self, now, payload).tap { |the_event| the_event.topic = identifier }
         _send_to_broker event
 
         payload
@@ -77,7 +77,7 @@ module Emittance
       def emit_with_dynamic_identifier(*identifiers, payload:)
         now = Time.now
         event_klass = _event_klass_for(*identifiers)
-        event = event_klass.new(self, now, payload).tap { |event| event.topic = identifiers.join('.') }
+        event = event_klass.new(self, now, payload).tap { |the_event| the_event.topic = identifiers.join('.') }
         _send_to_broker event
 
         payload

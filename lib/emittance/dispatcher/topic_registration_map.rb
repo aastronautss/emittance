@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 module Emittance
@@ -113,7 +115,7 @@ module Emittance
       #
       # @param routing_key [#to_s] the routing key the registrations for which you with to clear from this map
       def clear_registrations_for(routing_key)
-        routing_key, head, tail, parts = process_routing_key(routing_key)
+        _routing_key, head, tail, parts = process_routing_key(routing_key)
 
         mapping = mappings[head]
 
@@ -130,6 +132,7 @@ module Emittance
 
       private
 
+      # rubocop:disable Metrics/AbcSize
       def my_subscriptions(head, original_lookup:)
         mappings['#'].subscriptions +
           mappings['*'].subscriptions +
@@ -151,8 +154,8 @@ module Emittance
         original_routing_key = routing_key
         result = Result.new(root, original_routing_key)
 
-        while parts_for_routing_key(routing_key).length > 0
-          routing_key, _, tail, _ = process_routing_key(routing_key)
+        until parts_for_routing_key(routing_key).empty?
+          routing_key, _, tail, = process_routing_key(routing_key)
           result += Result.new(root, original_routing_key, mappings['#'].map[routing_key].items)
 
           routing_key = tail
@@ -160,6 +163,7 @@ module Emittance
 
         result
       end
+      # rubocop:enable Metrics/AbcSize
 
       def process_routing_key(routing_key)
         routing_key = normalize_routing_key(routing_key)
@@ -241,12 +245,12 @@ module Emittance
 
         alias << push
 
-        def +(other_collection)
-          unless root_map == other_collection.root_map && lookup_key == other_collection.lookup_key
+        def +(other)
+          unless root_map == other.root_map && lookup_key == other.lookup_key
             raise ArgumentError, 'Cannot add two Results with different root_maps or lookup_keys'
           end
 
-          self.class.new(root_map, lookup_key, items + other_collection.items)
+          self.class.new(root_map, lookup_key, items + other.items)
         end
 
         def empty?
