@@ -38,18 +38,30 @@ module Emittance
     end
 
     # @return [Class] the currently enabled broker class
-    def broker
-      Emittance::Brokerage.broker
+    def default_broker
+      Emittance::Brokerage.default_broker
     end
 
+    alias broker default_broker
+
+    def dispatcher_for(*args)
+      Emittance::Brokerage.dispatcher_for(*args)
+    end
+
+    alias dispatcher dispatcher_for
+
     # @return [Class] the dispatcher attached to the currently enabled broker
-    def dispatcher
-      broker.dispatcher
+    def default_dispatcher
+      default_broker.dispatcher
     end
 
     # @param identifier [#to_sym] the identifier that can be used to identify the broker you wish to use
     def use_broker(identifier)
       Emittance::Brokerage.use_broker identifier
+    end
+
+    def default_broker=(identifier)
+      Emittance::Brokerage.default_broker = identifier
     end
 
     #   Emittance.use_middleware MyMiddleware
