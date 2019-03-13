@@ -6,6 +6,7 @@ require 'emittance/errors'
 require 'emittance/helpers/string_helpers'
 require 'emittance/helpers/constant_helpers'
 require 'emittance/event_lookup'
+require 'emittance/topic_lookup'
 require 'emittance/dispatcher'
 require 'emittance/brokerage'
 require 'emittance/broker'
@@ -72,6 +73,16 @@ module Emittance
       # Emittance::Dispatcher.suppress(&blk)
     end
     # :nocov:
+
+    def event_routing_strategy
+      @event_routing_strategy
+    end
+
+    def event_routing_strategy=(new_strategy)
+      @event_routing_strategy = new_strategy
+      Emittance::Event.lookup_strategy = new_strategy
+      Emittance::Dispatcher.routing_strategy = new_strategy
+    end
   end
 end
 

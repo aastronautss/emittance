@@ -15,7 +15,7 @@ RSpec.describe Emittance::Synchronous::Dispatcher do
   let(:emitter) { double 'emitter' }
   let(:timestamp) { Time.now }
   let(:payload) { 'hello' }
-  let(:event) { FooEvent.new emitter, timestamp, payload }
+  let(:event) { FooEvent.new(emitter, timestamp, payload).tap { |event| event.topic = :foo } }
 
   subject { Emittance::Synchronous::Dispatcher }
 

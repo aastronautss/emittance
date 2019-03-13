@@ -3,15 +3,20 @@
 require 'spec_helper'
 
 RSpec.describe Emittance::Event do
-  before do
-    stub_const 'FooEvent', Class.new(Emittance::Event)
-    stub_const 'BarEvent', Class.new(Emittance::Event)
-  end
+  describe 'class methods' do
+    describe '.add_identifier' do
+      before do
+        @previous_lookup = Emittance::Event.lookup_strategy
+        Emittance::Event.lookup_strategy = :classical
 
-  context 'class methods' do
-    subject { FooEvent }
+        stub_const 'FooEvent', Class.new(Emittance::Event)
+        stub_const 'BarEvent', Class.new(Emittance::Event)
+      end
 
-    describe 'add_identifier' do
+      after { Emittance::Event.lookup_strategy = @previous_lookup }
+
+      subject { FooEvent }
+
       it 'sets the new identifier' do
         subject.add_identifier :my_new_foo
         expect(subject.identifiers).to include(:my_new_foo)
@@ -28,6 +33,23 @@ RSpec.describe Emittance::Event do
 
       it 'raises when a class already resolves to the identifier' do
         expect { BarEvent.add_identifier :foo }.to raise_error(Emittance::IdentifierCollisionError)
+      end
+    end
+  end
+
+  describe '#identifiers' do
+    context 'with topical lookup strategy' do
+      before do
+        @previous_lookup = Emittance::Event.lookup_strategy
+        Emittance::Event.lookup_strategy = :topical
+      end
+
+      after { Emittance::Event.lookup_strategy = @previous_lookup }
+
+      subject { Emittance::Event.new(nil, Time.now, nil).tap { |event| event.topic = 'foo.bar' } }
+
+      it "returns the event's topic" do
+        expect(subject.identifiers).to eq(['foo.bar'])
       end
     end
   end

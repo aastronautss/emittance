@@ -38,6 +38,10 @@ module Emittance
         self
       end
 
+      def clear
+        @reg_map = {}
+      end
+
       private
 
       attr_reader :reg_map

@@ -8,9 +8,9 @@ module Emittance
   # event class.
   #
   module EventLookup
-    class << self
-      include Emittance::Helpers::StringHelpers
+    extend  Emittance::Helpers::StringHelpers
 
+    class << self
       # Look up an {Emittance::Event} class by an identifier. Generates an Event class if no such class exists for
       # that identifier.
       #
@@ -55,7 +55,7 @@ module Emittance
 
       # @param klass [Class] a subclass of {Emittance::Event} you wish to find the identifiers for
       # @return [Set<Symbol>] a collection of identifiers that can be used to identify that event class
-      def identifiers_for_klass(klass)
+      def identifiers_for_klass(klass, event = nil)
         Emittance::EventLookup::Registry.identifiers_for_klass(klass)
       end
 
@@ -219,7 +219,7 @@ module Emittance
         #
         # @param event_klass [Class] the class you want the identifiers for
         # @return [Set<Symbol>] all identifiers that can be used to identify the given event class
-        def identifiers_for_klass(event_klass)
+        def identifiers_for_klass(event_klass, _event = nil)
           lookup_klass_to_identifier_mapping(event_klass) ||
             (create_mapping_for_klass(event_klass) && lookup_klass_to_identifier_mapping(event_klass))
         end

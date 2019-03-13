@@ -10,7 +10,7 @@ module Emittance
     class << self
       attr_reader :registered_middlewares
 
-      # @param middleware [Class, Array] the middleware or array of middlewares you wish to register.
+      # @param middleware [Class, Array<#up, #down>] the middleware or array of middlewares you wish to register.
       # @return [Array] the updated list of registered middlewares.
       def register(middleware)
         middlewares = Array(middleware)

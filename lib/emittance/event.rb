@@ -2,6 +2,21 @@
 
 module Emittance
   ##
+  # = Topical Event Lookup
+  #
+  # This section describes the new ('topical') style of event lookup. This will be maintained in the future in favor
+  # of the old ('classical') style. However, it is not enabled by default. To enable this strategy, you must configure
+  # Emittance to use it:
+  #
+  #   Emittance.event_routing_strategy = :topical
+  #
+  # This strategy mimicks the topic name format used by RabbitMQ.
+  #
+  # = Classical Event Lookup (Legacy)
+  #
+  # This section describes the old ('classical') style of event lookup. While it's unlikely to be removed, it will
+  # remain unsupported in favor of the new ('topical') style of event lookup, described above.
+  #
   # Basic usage of Emittance doesn't require that you fiddle with objects of type +Emittance::Event+. However, this
   # class is open for you to inherit from in the cases where you would like to customize some aspects of the event.
   #
@@ -104,10 +119,37 @@ module Emittance
   # We can manually add an identifier post-hoc, but this would nevertheless become confusing.
   #
   class Event
+    LOOKUP_STRATEGIES = {
+      classical: EventLookup,
+      topical: TopicLookup
+    }.freeze
+
+    @lookup_strategy = EventLookup
+
     class << self
+      attr_reader :lookup_strategy
+
+      # @param new_strategy_name [#to_sym] the name of the new lookup strategy
+      def lookup_strategy=(new_strategy_name)
+        new_strategy =
+          if new_strategy_name.is_a?(Module)
+            new_strategy_name
+          else
+            LOOKUP_STRATEGIES[new_strategy_name.to_sym]
+          end
+
+        raise ArgumentError, 'Could not find a lookup strategy with that name' unless new_strategy
+
+        @lookup_strategy = new_strategy
+      end
+
+      def inherited(subklass)
+        subklass.instance_variable_set('@lookup_strategy', lookup_strategy)
+      end
+
       # @return [Array<Symbol>] the identifier that can be used by the {Emittance::Broker broker} to find event handlers
-      def identifiers
-        EventLookup.identifiers_for_klass(self).to_a
+      def identifiers(event = nil)
+        lookup_strategy.identifiers_for_klass(self, event).to_a
       end
 
       # Gives the Event object a custom identifier.
@@ -115,17 +157,18 @@ module Emittance
       # @param sym [Symbol] the identifier you wish to identify this event by when emitting and watching for it
       def add_identifier(sym)
         raise Emittance::InvalidIdentifierError, 'Identifiers must respond to #to_sym' unless sym.respond_to?(:to_sym)
-        EventLookup.register_identifier self, sym.to_sym
+        lookup_strategy.register_identifier self, sym.to_sym
       end
 
       # @param identifiers [*] anything that can be derived into an identifier (or the event class itself) for the
       #   purposes of looking up an event class.
       def event_klass_for(*identifiers)
-        EventLookup.find_event_klass(*identifiers)
+        lookup_strategy.find_event_klass(*identifiers)
       end
     end
 
     attr_reader :emitter, :timestamp, :payload
+    attr_accessor :topic
 
     # @param emitter the object that emitted the event
     # @param timestamp [Time] the time at which the event occurred
@@ -138,7 +181,7 @@ module Emittance
 
     # @return [Array<Symbol>] all identifiers that can be used to identify the event
     def identifiers
-      self.class.identifiers
+      self.class.identifiers(self)
     end
   end
 end
