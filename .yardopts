@@ -2,3 +2,5 @@
 --no-private
 'lib/**/*.rb'
 --readme README.md
+-
+docs/RoutingStrategies.md
