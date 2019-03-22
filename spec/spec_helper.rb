@@ -25,4 +25,3 @@ RSpec.configure do |config|
     require_relative 'fixtures/test_classes'
   end
 end
-
