@@ -4,6 +4,33 @@ require 'spec_helper'
 
 RSpec.describe Emittance::Event do
   describe 'class methods' do
+    describe '.from_h' do
+      it 'returns a new object with symbolized keys translated' do
+        input = { emitter: 'the emitter', timestamp: Time.now, payload: 'the payload', topic: 'something.happened' }
+        output = Emittance::Event.from_h(input)
+
+        expect(output.emitter).to eq('the emitter')
+        expect(output.timestamp).to_not be_nil
+        expect(output.payload).to eq('the payload')
+        expect(output.topic).to eq('something.happened')
+      end
+
+      it 'returns a new object with stringified keys translated' do
+        input = {
+          'emitter' => 'another emitter',
+          'timestamp' => Time.now,
+          'payload' => 'another payload',
+          'topic' => 'something.else.happened'
+        }
+        output = Emittance::Event.from_h(input)
+
+        expect(output.emitter).to eq('another emitter')
+        expect(output.timestamp).to_not be_nil
+        expect(output.payload).to eq('another payload')
+        expect(output.topic).to eq('something.else.happened')
+      end
+    end
+
     describe '.add_identifier' do
       before do
         @previous_lookup = Emittance::Event.lookup_strategy

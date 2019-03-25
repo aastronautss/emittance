@@ -129,6 +129,15 @@ module Emittance
     class << self
       attr_reader :lookup_strategy
 
+      def from_h(event_h)
+        emitter = fetch_indifferently_from_hash(event_h, :emitter)
+        timestamp = fetch_indifferently_from_hash(event_h, :timestamp)
+        payload = fetch_indifferently_from_hash(event_h, :payload)
+        topic = fetch_indifferently_from_hash(event_h, :topic)
+
+        new(emitter, timestamp, payload).tap { |event| event.topic = topic }
+      end
+
       # @param new_strategy_name [#to_sym] the name of the new lookup strategy
       def lookup_strategy=(new_strategy_name)
         new_strategy =
@@ -166,6 +175,12 @@ module Emittance
       def event_klass_for(*identifiers)
         lookup_strategy.find_event_klass(*identifiers)
       end
+
+      private
+
+      def fetch_indifferently_from_hash(hsh, key)
+        hsh[key.to_s] || hsh[key.to_sym]
+      end
     end
 
     attr_reader :emitter, :timestamp, :payload
@@ -178,6 +193,15 @@ module Emittance
       @emitter = emitter
       @timestamp = timestamp
       @payload = payload
+    end
+
+    def to_h
+      {
+        emitter: emitter,
+        timestamp: timestamp,
+        payload: payload,
+        topic: topic
+      }
     end
 
     # @return [Array<Symbol>] all identifiers that can be used to identify the event
