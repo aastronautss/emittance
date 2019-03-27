@@ -20,3 +20,9 @@ Layout/MultilineOperationIndentation:
 
 Style/DoubleNegation:
   Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Style/LambdaCall:
+  EnforcedStyle: braces
