@@ -30,6 +30,11 @@ module Emittance
         collection_for(lookup_term, keys)
       end
 
+      # @private
+      def register(identifier, registration)
+        self[identifier] << registration
+      end
+
       # @param args args passed to +Hash#each_key+
       # @param blk block passed to +Hash#each_key+
       # @return [RegistrationMap] self

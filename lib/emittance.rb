@@ -79,6 +79,11 @@ module Emittance
       Emittance::Middleware.clear_registrations!
     end
 
+    # @return [Class] the registration router currently enabled by the dispatcher
+    def registration_router_klass
+      Emittance::Dispatcher.registration_router_klass
+    end
+
     # Not yet implemented! Remove nocov and private flags when finished.
     # :nocov:
     # @private
