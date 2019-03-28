@@ -14,15 +14,15 @@ module Emittance
         attr_accessor :invalidation_strategy
       end
 
-      def up(event)
-        invalid!(event) unless Emittance.event_validator.valid_for_event?(event)
+      def up
+        invalid! unless Emittance.event_validator.valid_for_event?(event)
 
         event
       end
 
       private
 
-      def invalid!(event)
+      def invalid!
         message = "Invalid paylod for event emitted by #{event.emitter} " \
           "(identifiers: #{event.identifiers.split(', ')})"
 
