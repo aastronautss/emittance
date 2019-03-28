@@ -9,7 +9,7 @@ module Emittance
     # Event payloads are often passed in the form of a hash (or JSON object). This middleware ensures that these
     # payloads contain the correct structure for a given schema.
     #
-    class EventValidation
+    class EventValidation < Emittance::Middleware
       class << self
         attr_accessor :invalidation_strategy
       end
