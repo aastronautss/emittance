@@ -34,7 +34,7 @@ module Emittance
 
       class << self
         def build(&blk)
-          new.instance_eval(&blk)
+          new.tap { |schema| schema.instance_eval(&blk) }
         end
       end
 

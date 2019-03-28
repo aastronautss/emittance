@@ -20,6 +20,10 @@ RSpec.describe Emittance::EventValidator::SimpleSchema do
 
       Emittance::EventValidator::SimpleSchema.build { observer.call(self) }
     end
+
+    it 'returns an instance of self' do
+      expect(Emittance::EventValidator::SimpleSchema.build { 'hello' }).to be_a(Emittance::EventValidator::SimpleSchema)
+    end
   end
 
   describe '#expected_keys' do
