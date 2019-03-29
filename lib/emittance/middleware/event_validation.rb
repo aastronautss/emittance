@@ -24,7 +24,7 @@ module Emittance
 
       def invalid!
         message = "Invalid paylod for event emitted by #{event.emitter} " \
-          "(identifiers: #{event.identifiers.split(', ')})"
+          "(identifiers: #{event.identifiers.join(', ')})"
 
         raise InvalidPayloadError, message unless invalidation_strategy == :warn
 
